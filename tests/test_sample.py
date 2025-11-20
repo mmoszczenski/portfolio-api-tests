@@ -1,7 +1,11 @@
 import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 def test_auth_valid_key():
-    api_key = "915c4760f9b9288c55839f36908b1895"
+    api_key = os.getenv('API_KEY')
     base_url = "https://api.openweathermap.org/data/2.5/weather"
 
     params = {
