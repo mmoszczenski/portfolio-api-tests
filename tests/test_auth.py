@@ -56,6 +56,22 @@ def test_auth_no_key_provided():
     assert response.status_code == 401
     assert "Invalid API key" in data["message"]
 
+def test_auth_key_with_white_spaces():
+    
+    api_key = os.getenv("API_KEY")
+    invalid_key = " " + api_key
+    
+    base_url = "https://api.openweathermap.org/data/2.5/weather"
+    
+    params = {
+        "q": "London",
+        "appid" : invalid_key
 
+    }
+  
+    response = requests.get(base_url, params=params)
+
+    data = response.json()
     
-    
+    assert response.status_code == 401
+    assert "Invalid API key" in data["message"]
