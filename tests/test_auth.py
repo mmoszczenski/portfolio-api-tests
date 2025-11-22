@@ -1,76 +1,38 @@
-import requests
-from dotenv import load_dotenv
-import os
+from conftest import weather
 
-load_dotenv()
 
-def test_auth_valid_key():
-    
-    api_key = os.getenv('API_KEY')
-    base_url = "https://api.openweathermap.org/data/2.5/weather"
+def test_auth_valid_key(weather, api_key):
 
-    params = {
-        "q": "London",
-        "appid": api_key
-    }
+    response = weather.get_weather("London", api_key)
 
-    response = requests.get(base_url, params=params)
-
-    data = response.json()\
+    data = response.json()
         
     assert response.status_code == 200
     assert "weather" in data
     assert "main" in data
     assert data["name"] == "London"
     
-def test_auth_invalid_key():
-    
-    api_key = "111111"
-    base_url = "https://api.openweathermap.org/data/2.5/weather"
-    
-    params = {
-        "q": "London",
-        "appid": api_key
-    }
-    
-    response = requests.get(base_url, params=params)
-    
+def test_auth_invalid_key(weather):
+     
+    response = weather.get_weather("London", api_key = "11111")
     data = response.json()
 
     assert response.status_code == 401
     assert "Invalid API key" in data["message"]
     
-def test_auth_no_key_provided():
+def test_auth_no_key_provided(weather):
     
-    base_url = "https://api.openweathermap.org/data/2.5/weather"
-
-    params = {
-        "q": "London",
-
-    }
-    
-    response = requests.get(base_url, params=params)
-    
+    response = weather.get_weather("London")
     data = response.json()
     
     assert response.status_code == 401
     assert "Invalid API key" in data["message"]
 
-def test_auth_key_with_white_spaces():
+def test_auth_key_with_white_spaces(weather, api_key):
     
-    api_key = os.getenv("API_KEY")
     invalid_key = " " + api_key
-    
-    base_url = "https://api.openweathermap.org/data/2.5/weather"
-    
-    params = {
-        "q": "London",
-        "appid" : invalid_key
 
-    }
-  
-    response = requests.get(base_url, params=params)
-
+    response = weather.get_weather("London", invalid_key)
     data = response.json()
     
     assert response.status_code == 401
