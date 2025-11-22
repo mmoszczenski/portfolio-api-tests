@@ -12,4 +12,6 @@ def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, citi
     
   for city in cities:
       response = weather.get_weather(city, api_key)
+      data = response.json()
       assert response.status_code == 200
+      assert data["name"].lower() == city.lower()
