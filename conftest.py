@@ -1,5 +1,6 @@
 import os
 import pytest
+import json
 from services.api_client import ApiClient
 from services.weather_service import WeatherService
 from dotenv import load_dotenv
@@ -17,4 +18,8 @@ def client() -> ApiClient:
 @pytest.fixture
 def weather(client) -> WeatherService:
     return WeatherService(client)
-    
+
+@pytest.fixture
+def cities():
+    with open("data/cities.json") as f:
+        return json.load(f)
