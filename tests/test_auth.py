@@ -1,5 +1,3 @@
-from conftest import weather
-
 
 def test_auth_valid_key(weather, api_key):
 
