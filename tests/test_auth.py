@@ -2,7 +2,6 @@
 def test_auth_valid_key(weather, api_key):
 
     response = weather.get_weather("London", api_key)
-
     data = response.json()
         
     assert response.status_code == 200

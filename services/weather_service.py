@@ -1,10 +1,10 @@
-
+import requests
 class WeatherService:
     
     def __init__(self, client):
         self.client = client
         
-    def get_weather(self, city, api_key=None):
+    def get_weather(self, city, api_key=None) -> requests.Response:
         params  = {"q": city}
         if api_key is not None:
             params["appid"] = api_key

@@ -11,10 +11,10 @@ def api_key():
     return os.getenv("API_KEY")
 
 @pytest.fixture
-def client():
+def client() -> ApiClient:
     return ApiClient()
 
 @pytest.fixture
-def weather(client):
+def weather(client) -> WeatherService:
     return WeatherService(client)
     
