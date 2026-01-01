@@ -15,3 +15,13 @@ def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, citi
       data = response.json()
       assert response.status_code == 200
       assert data["name"].lower() == city.lower()
+      
+      
+# test na sprawdzanie wartości pogodowej zwróconej w stopniach C
+
+def test_weather_returns_value_in_C(weather, api_key):
+    pass
+
+# test na sprawdzenie wartości pogodowej zwróconej w F
+
+# test na sprawdzanie języka zwróconej odpowiedzi (np. polski)
