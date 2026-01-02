@@ -15,14 +15,27 @@ def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, citi
       data = response.json()
       assert response.status_code == 200
       assert data["name"].lower() == city.lower()
-      
-      
-# test na sprawdzanie wartości pogodowej zwróconej w stopniach C
 
-def test_weather_returns_value_in_C(weather, api_key):
+def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_key):
     
-    response = weather.get_weather
+    response_default = weather.get_weather("Warsaw", api_key)
+    response_metric = weather.get_weather("Warsaw", api_key, units="metric")
+    
+    assert response_default.status_code == 200
+    assert response_metric.status_code == 200
+    
+    temp_default = response_default.json()["main"]["temp"]
+    temp_metric = response_metric.json()["main"]["temp"]
+    
+    difference = abs((temp_default - 273.15) - temp_metric)
 
+    assert  difference < 0.2, (
+        f"Temperature difference too large: "
+        f"{difference} vs 0.2 allowed"
+        f"Default = {temp_default}K, Metric={temp_metric}C"
+        )
+    
+    
 # test na sprawdzenie wartości pogodowej zwróconej w F
 
 # test na sprawdzanie języka zwróconej odpowiedzi (np. polski)
