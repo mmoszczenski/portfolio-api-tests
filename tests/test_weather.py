@@ -20,7 +20,8 @@ def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, citi
 # test na sprawdzanie wartości pogodowej zwróconej w stopniach C
 
 def test_weather_returns_value_in_C(weather, api_key):
-    pass
+    
+    response = weather.get_weather
 
 # test na sprawdzenie wartości pogodowej zwróconej w F
 
