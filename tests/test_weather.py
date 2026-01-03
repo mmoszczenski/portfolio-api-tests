@@ -38,4 +38,8 @@ def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_k
     
 # test na sprawdzenie wartości pogodowej zwróconej w F
 
+def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key):
+    
+    pass
+
 # test na sprawdzanie języka zwróconej odpowiedzi (np. polski)
