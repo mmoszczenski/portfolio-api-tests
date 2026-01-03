@@ -34,12 +34,23 @@ def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_k
         f"{difference} vs 0.2 allowed"
         f"Default = {temp_default}K, Metric={temp_metric}C"
         )
-    
-    
-# test na sprawdzenie wartości pogodowej zwróconej w F
 
 def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key):
     
-    pass
+    response_default = weather.get_weather("Warsaw", api_key)
+    response_imperial = weather.get_weather("Warsaw", api_key, units="imperial")
+    
+    assert response_default.status_code == 200
+    assert response_imperial.status_code == 200
+    
+    temp_default = response_default.json()["main"]["temp"]
+    temp_imperial = response_imperial.json()["main"]["temp"]
+    
+    expected_fahrenheit = (temp_default - 273.15) * 1.8 + 32
+    
+    difference = abs(expected_fahrenheit - temp_imperial)
+    
+    assert difference < 0.2
+    
 
 # test na sprawdzanie języka zwróconej odpowiedzi (np. polski)
