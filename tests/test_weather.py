@@ -54,3 +54,6 @@ def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key):
     
 
 # test na sprawdzanie języka zwróconej odpowiedzi (np. polski)
+
+def test_weather_returns_polish_when_langugage_PL(weather, api_key):
+    pass
