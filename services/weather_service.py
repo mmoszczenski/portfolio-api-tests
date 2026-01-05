@@ -13,5 +13,4 @@ class WeatherService:
         if lang is not None:
             params["lang"] = lang
             
-            
         return self.client.get("/weather", params = params)
