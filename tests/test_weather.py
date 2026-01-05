@@ -1,5 +1,4 @@
 import pytest
-import pprint
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key):
         
@@ -52,9 +51,6 @@ def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key):
     difference = abs(expected_fahrenheit - temp_imperial)
     
     assert difference < 0.2
-    
-
-# test na sprawdzanie języka zwróconej odpowiedzi (np. polski)
 
 def test_weather_returns_polish_when_langugage_PL(weather, api_key):
     
