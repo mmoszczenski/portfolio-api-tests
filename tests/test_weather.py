@@ -54,7 +54,6 @@ def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key):
 
 def test_weather_returns_polish_when_langugage_PL(weather, api_key):
     
-    
     response_eng = weather.get_weather("Warsaw", api_key)
     response_pl = weather.get_weather("Warsaw", api_key, lang="pl")
     
@@ -69,5 +68,15 @@ def test_weather_returns_polish_when_langugage_PL(weather, api_key):
         f"(en='{description_eng}', pl='{description_pl}')"
         )
     
+    
+    # test na podanie miejsca po współprzędnych, bez parametru 'q'
+    
+    # test na walidację struktury JSON
+
+    # test na podanie niestniejącego miasta
+    
+    # test na puste zapytanie
+    
+    # test na niepoprawny typ parametru (np. liczby zamiast liter w parametrze 'q')
     
     
