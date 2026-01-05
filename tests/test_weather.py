@@ -1,4 +1,5 @@
 import pytest
+from conftest import api_key
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key):
         
@@ -68,8 +69,10 @@ def test_weather_returns_polish_when_langugage_PL(weather, api_key):
         f"(en='{description_eng}', pl='{description_pl}')"
         )
     
-    
     # test na podanie miejsca po współprzędnych, bez parametru 'q'
+    
+    def test_weather_can_be_requsted_by_lat_and_long(weather, api_key):
+        pass
     
     # test na walidację struktury JSON
 
