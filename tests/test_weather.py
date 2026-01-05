@@ -1,4 +1,5 @@
 import pytest
+import pprint
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key):
         
@@ -56,4 +57,21 @@ def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key):
 # test na sprawdzanie języka zwróconej odpowiedzi (np. polski)
 
 def test_weather_returns_polish_when_langugage_PL(weather, api_key):
-    pass
+    
+    
+    response_eng = weather.get_weather("Warsaw", api_key)
+    response_pl = weather.get_weather("Warsaw", api_key, lang="pl")
+    
+    assert response_eng.status_code == 200
+    assert response_pl.status_code == 200
+
+    description_eng = response_eng.json()["weather"][0]["description"]
+    description_pl = response_pl.json()["weather"][0]["description"]
+    
+    assert description_eng != description_pl,         (
+        "Weather description should differ between languages "
+        f"(en='{description_eng}', pl='{description_pl}')"
+        )
+    
+    
+    
