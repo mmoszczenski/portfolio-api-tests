@@ -69,7 +69,7 @@ def test_weather_returns_polish_when_langugage_PL(weather, api_key):
         f"(en='{description_eng}', pl='{description_pl}')"
         )
     
-def test_weather_can_be_requsted_by_lat_and_long(weather, api_key):
+def test_weather_can_be_requsted_by_lat_and_lon(weather, api_key):
         
     lat = 52.2297
     lon = 21.0122
