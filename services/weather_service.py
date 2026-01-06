@@ -15,12 +15,11 @@ class WeatherService:
             
         return self.client.get("/weather", params = params)
     
-    
     def get_weather_by_coordinates(self, lat, lon, api_key) -> requests.Response:
         params = {
             "lat": lat,
             "lon": lon,
-            "api_key": api_key
+            "appid": api_key
         }
         
         return self.client.get("/weather", params=params)
