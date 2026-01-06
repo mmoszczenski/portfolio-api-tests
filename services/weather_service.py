@@ -1,4 +1,5 @@
 import requests
+from conftest import api_key
 class WeatherService:
     
     def __init__(self, client):
@@ -14,3 +15,16 @@ class WeatherService:
             params["lang"] = lang
             
         return self.client.get("/weather", params = params)
+    
+    
+    def get_weather_by_coordinates(self, lat, lon, api_key) -> requests.Response:
+        
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "api_key": api_key
+        }
+        
+        return self.client.get("/weather", params=params)
+        
+    
