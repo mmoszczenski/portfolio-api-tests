@@ -69,11 +69,28 @@ def test_weather_returns_polish_when_langugage_PL(weather, api_key):
         f"(en='{description_eng}', pl='{description_pl}')"
         )
     
-    # test na podanie miejsca po współprzędnych, bez parametru 'q'
+def test_weather_can_be_requsted_by_lat_and_long(weather, api_key):
+        
+    lat = 52.2297
+    lon = 21.0122
+        
+    response = weather.get_weather_by_coordinates(lat, lon, api_key)
     
-    def test_weather_can_be_requsted_by_lat_and_long(weather, api_key):
-        pass
+    assert response.status_code == 200
+        
+    data = response.json()
+    temp = data["main"]["temp"]
+        
+    assert "weather" in data
+    assert "main" in data
+    assert "coord" in data
+        
+    assert abs(data["coord"]["lat"] - lat) < 0.01
+    assert abs(data["coord"]["lon"] - lon) < 0.01 
     
+    assert isinstance(temp, (int, float))
+        
+        
     # test na walidację struktury JSON
 
     # test na podanie niestniejącego miasta
