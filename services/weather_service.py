@@ -1,4 +1,5 @@
 import requests
+
 class WeatherService:
     
     def __init__(self, client):
