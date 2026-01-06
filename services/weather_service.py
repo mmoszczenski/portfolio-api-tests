@@ -18,7 +18,6 @@ class WeatherService:
     
     
     def get_weather_by_coordinates(self, lat, lon, api_key) -> requests.Response:
-        
         params = {
             "lat": lat,
             "lon": lon,
