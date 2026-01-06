@@ -1,5 +1,4 @@
 import requests
-from conftest import api_key
 class WeatherService:
     
     def __init__(self, client):
