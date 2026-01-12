@@ -1,5 +1,7 @@
 import pytest
-from conftest import api_key
+from conftest import api_key, weather
+import json
+from jsonschema import validate
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key):
         
@@ -92,7 +94,20 @@ def test_weather_can_be_requsted_by_lat_and_lon(weather, api_key):
         
         
     # test na walidację struktury JSON
-
+    
+def test_weahter_response_matches_schema(weather, api_key):
+    
+    response = weather.get_weather("Warsaw", api_key)
+    assert response.status_code == 200
+    
+    data = response.json()
+    
+    with open("schemas/weather_schema.json") as f:
+        schema = json.load(f)
+        
+    validate(instance=data, schema=schema)
+        
+        
     # test na podanie niestniejącego miasta
     
     # test na puste zapytanie
