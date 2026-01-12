@@ -90,9 +90,6 @@ def test_weather_can_be_requsted_by_lat_and_lon(weather, api_key):
     assert abs(data["coord"]["lon"] - lon) < 0.01 
     
     assert isinstance(temp, (int, float))
-        
-        
-    # test na walidację struktury JSON
     
 def test_weahter_response_matches_schema(weather, api_key):
     
