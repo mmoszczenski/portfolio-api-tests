@@ -5,7 +5,7 @@ def test_weather_returns_valid_data_for_single_city(weather, api_key):
         
     response = weather.get_weather("Warsaw", api_key)
     data = response.json()
-    
+
     assert response.status_code == 200
     assert data["name"] == "Warsaw"
     
