@@ -1,6 +1,7 @@
 
 from utils.schema_loader import load_schema
 from jsonschema import validate
+import pprint
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key):
         
@@ -97,12 +98,21 @@ def test_weahter_response_matches_schema(weather, api_key):
     assert response.status_code == 200
     
     data = response.json()
-    
     schema = load_schema("weather_schema.json")
         
     validate(instance=data, schema=schema)
         
-    # test na podanie niestniejącego miasta
+def test_weather_returns_404_for_non_existing_city(weather, api_key):
+    
+    response = weather.get_weather("NOT_EXISTING_CITY", api_key)
+    
+    assert response.status_code == 404
+    
+    data = response.json()
+    
+    assert "city not found" in data["message"]
+    
+
     
     # test na puste zapytanie
     
