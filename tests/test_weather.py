@@ -109,12 +109,22 @@ def test_weather_returns_404_for_non_existing_city(weather, api_key):
     assert response.status_code == 404
     
     data = response.json()
-    
+
     assert "city not found" in data["message"]
     
-
     
-    # test na puste zapytanie
+def test_weather_returns_400_when_city_param_missing(weather, api_key):
+    
+    response = weather.get_weather(api_key=api_key)
+    
+    assert response.status_code == 400
+    
+    data = response.json()
+    message = data["message"]
+
+    assert "Nothing to geocode" in message    
+        
+    
     
     # test na niepoprawny typ parametru (np. liczby zamiast liter w parametrze 'q')
     
