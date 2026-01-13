@@ -1,7 +1,6 @@
 
 from utils.schema_loader import load_schema
 from jsonschema import validate
-import pprint
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key):
         
