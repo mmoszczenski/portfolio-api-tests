@@ -123,9 +123,4 @@ def test_weather_returns_400_when_city_param_missing(weather, api_key):
     message = data["message"]
 
     assert "Nothing to geocode" in message    
-        
-    
-    
-    # test na niepoprawny typ parametru (np. liczby zamiast liter w parametrze 'q')
-    
     
