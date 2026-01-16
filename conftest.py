@@ -3,6 +3,7 @@ import pytest
 import json
 from services.api_client import ApiClient
 from services.weather_service import WeatherService
+from services.forecast_service import ForecastSerivce
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,6 +19,10 @@ def client() -> ApiClient:
 @pytest.fixture
 def weather(client) -> WeatherService:
     return WeatherService(client)
+
+@pytest.fixture
+def forecast(client) -> ForecastSerivce:
+    return ForecastSerivce(client)
 
 @pytest.fixture
 def cities():
