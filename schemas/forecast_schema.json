@@ -1,0 +1,77 @@
+{
+  "type": "object",
+  "required": ["list", "city"],
+  "properties": {
+    "list": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["dt", "main", "weather"],
+        "properties": {
+          "dt": {
+            "type": "number"
+          },
+          "main": {
+            "type": "object",
+            "required": ["temp"],
+            "properties": {
+              "temp": {
+                "type": "number"
+              },
+              "feels_like": {
+                "type": "number"
+              },
+              "temp_min": {
+                "type": "number"
+              },
+              "temp_max": {
+                "type": "number"
+              },
+              "pressure": {
+                "type": "number"
+              },
+              "humidity": {
+                "type": "number"
+              }
+            }
+          },
+          "weather": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["main", "description"],
+              "properties": {
+                "main": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "city": {
+      "type": "object",
+      "required": ["name", "country"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}
