@@ -1,7 +1,7 @@
 import requests
 class ForecastSerivce:
     
-    def init(self, client):
+    def __init__(self, client):
         self.client = client
         
     def get_forecast(self, city=None, api_key=None) -> requests.Response:
