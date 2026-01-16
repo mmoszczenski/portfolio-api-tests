@@ -13,4 +13,4 @@ class ForecastSerivce:
         if api_key is not None:
             params["appid"] = api_key
             
-        return self.client.get("forecast", params=params)
+        return self.client.get("/forecast", params=params)
