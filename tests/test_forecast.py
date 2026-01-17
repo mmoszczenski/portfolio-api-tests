@@ -50,3 +50,7 @@ def test_forecast_returns_404_when_city_unkown(forecast, api_key):
     data = response.json()    
     assert "city not found" in data["message"]
     
+def test_forecast_returns_temp_in_C_when_units_metric(forecast, api_key):
+    
+    response = forecast.get_forecast("Warsaw", api_key)
+    
