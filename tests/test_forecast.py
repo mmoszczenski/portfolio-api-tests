@@ -1,5 +1,6 @@
 from utils.schema_loader import load_schema
 from jsonschema import validate
+import pprint
 
 def test_forecast_returns_5_day_forecast_for_city(forecast, api_key):
     
@@ -42,4 +43,10 @@ def test_forecast_response_matches_schema(forecast, api_key):
     validate(instance = data, schema = schema)
     
     
+def test_forecast_returns_404_when_city_unkown(forecast, api_key):
+    
+    response = forecast.get_forecast("askjdfhaksdf", api_key)
+    assert response.status_code == 404
+    data = response.json()    
+    assert "city not found" in data["message"]
     
