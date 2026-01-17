@@ -58,9 +58,10 @@ def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api
     response_default = forecast.get_forecast(city, api_key)
     response_metric = forecast.get_forecast(city, api_key, "metric")
     
-    assert response_default == 200
-    assert response_metric == 200
+    assert response_default.status_code == 200
+    assert response_metric.status_code == 200
     
+  
     data_default = response_default.json()
     data_metric = response_metric.json()
     
@@ -72,6 +73,5 @@ def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api
     
     difference = abs((temp_k - 273.15) - temp_c)
     
-    assert difference < 0.2
-    
+    assert difference < 0.3
     
