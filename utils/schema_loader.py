@@ -1,5 +1,4 @@
-import json
+from utils.json_loader import load_json
 
 def load_schema(name):
-    with open(f"schemas/{name}") as f:
-        return json.load(f)
+    return load_json(f"schemas/{name}")
