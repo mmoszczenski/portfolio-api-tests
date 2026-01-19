@@ -1,13 +1,11 @@
 import os
 import pytest
-import json
 from services.api_client import ApiClient
 from services.weather_service import WeatherService
 from services.forecast_service import ForecastSerivce
 from dotenv import load_dotenv
 from utils.cities_loader import load_cities
 from utils.schema_loader import load_schema
-from conftest import weather
 
 load_dotenv()
 

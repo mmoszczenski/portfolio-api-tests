@@ -1,6 +1,7 @@
 
-from utils.schema_loader import load_schema
+
 from jsonschema import validate
+
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key):
         
@@ -91,13 +92,13 @@ def test_weather_can_be_requsted_by_lat_and_lon(weather, api_key):
     
     assert isinstance(temp, (int, float))
     
-def test_weahter_response_matches_schema(weather, api_key):
+def test_weahter_response_matches_schema(weather, api_key, weather_schema):
     
     response = weather.get_weather("Warsaw", api_key)
     assert response.status_code == 200
     
     data = response.json()
-    schema = load_schema("weather_schema.json")
+    schema = weather_schema
         
     validate(instance=data, schema=schema)
         

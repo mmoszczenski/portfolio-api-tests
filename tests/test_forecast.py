@@ -1,6 +1,4 @@
-from utils.schema_loader import load_schema
 from jsonschema import validate
-import pprint
 
 def test_forecast_returns_5_day_forecast_for_city(forecast, api_key):
     
@@ -32,13 +30,13 @@ def test_forecast_returns_5_day_forecast_for_city(forecast, api_key):
     assert data["city"]["name"] == city
     
     
-def test_forecast_response_matches_schema(forecast, api_key):
+def test_forecast_response_matches_schema(forecast, api_key, forecast_schema):
     
     response = forecast.get_forecast("Warsaw", api_key)
     assert response.status_code == 200
     
     data = response.json()
-    schema = load_schema("forecast_schema.json")
+    schema = forecast_schema
     
     validate(instance = data, schema = schema)
     
