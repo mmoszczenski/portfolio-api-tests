@@ -1,5 +1,4 @@
-import json
+from utils.json_loader import load_json
 
-def cities_loader(name):
-    with open(f"data/{name}") as f:
-        return json.load(f)
+def load_cities():
+    return load_json("data/cities.json")
