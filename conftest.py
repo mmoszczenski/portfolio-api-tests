@@ -5,6 +5,9 @@ from services.api_client import ApiClient
 from services.weather_service import WeatherService
 from services.forecast_service import ForecastSerivce
 from dotenv import load_dotenv
+from utils.cities_loader import load_cities
+from utils.schema_loader import load_schema
+from conftest import weather
 
 load_dotenv()
 
@@ -26,5 +29,12 @@ def forecast(client) -> ForecastSerivce:
 
 @pytest.fixture
 def cities():
-    with open("data/cities.json") as f:
-        return json.load(f)
+    return load_cities()
+
+@pytest.fixture
+def weather_schema():
+    return load_schema("weather_schema.json")
+
+@pytest.fixture
+def forecast_schema():
+    return load_schema("forecast_schema.json")
