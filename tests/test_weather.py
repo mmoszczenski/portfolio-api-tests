@@ -144,7 +144,20 @@ def test_weather_returns_400_when_city_param_empty_string(weather, api_key):
     message = data["message"]
 
     assert "Nothing to geocode" in message
+
     # test special characters in city name
+
+
+def test_weather_returns_400_when_city_param_with_special_characters(weather, api_key):
+
+    response = weather.get_weather("Wa%^()*raw", api_key)
+
+    assert response.status_code == 404
+
+    data = response.json()
+    message = data["message"]
+
+    assert "city not found" in message
     # test very long city name value
     # test invalid coordinates
     # test coordingates with None/null values
