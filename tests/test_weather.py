@@ -131,8 +131,6 @@ def test_weather_returns_400_when_city_param_missing(weather, api_key):
 
     assert "Nothing to geocode" in message
 
-    #  test empty string as city name
-
 
 def test_weather_returns_400_when_city_param_empty_string(weather, api_key):
 
@@ -145,8 +143,6 @@ def test_weather_returns_400_when_city_param_empty_string(weather, api_key):
 
     assert "Nothing to geocode" in message
 
-    # test special characters in city name
-
 
 def test_weather_returns_400_when_city_param_with_special_characters(weather, api_key):
 
@@ -158,8 +154,31 @@ def test_weather_returns_400_when_city_param_with_special_characters(weather, ap
     message = data["message"]
 
     assert "city not found" in message
-    # test very long city name value
+
+
+def test_weather_returns_success_for_city_long_value(weather, api_key):
+    pass
+
     # test invalid coordinates
+
+
+def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
+    pass
+
     # test coordingates with None/null values
+
+
+def test_weather_returns_400_when_coordinates_null(weather, api_key):
+    pass
+
     # test with country code
+
+
+def test_weather_can_be_requested_by_country_code(weather, api_key):
+    pass
+
     # test with city ID instead of name
+
+
+def test_weahter_can_be_requested_by_city_id(weather, api_key):
+    pass
