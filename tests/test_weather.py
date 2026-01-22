@@ -1,5 +1,4 @@
 
-
 from jsonschema import validate
 
 
@@ -134,6 +133,17 @@ def test_weather_returns_400_when_city_param_missing(weather, api_key):
 
     #  test empty string as city name
 
+
+def test_weather_returns_400_when_city_param_empty_string(weather, api_key):
+
+    response = weather.get_weather("", api_key)
+
+    assert response.status_code == 400
+
+    data = response.json()
+    message = data["message"]
+
+    assert "Nothing to geocode" in message
     # test special characters in city name
     # test very long city name value
     # test invalid coordinates
