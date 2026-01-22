@@ -131,3 +131,12 @@ def test_weather_returns_400_when_city_param_missing(weather, api_key):
     message = data["message"]
 
     assert "Nothing to geocode" in message
+
+    #  test empty string as city name
+
+    # test special characters in city name
+    # test very long city name value
+    # test invalid coordinates
+    # test coordingates with None/null values
+    # test with country code
+    # test with city ID instead of name
