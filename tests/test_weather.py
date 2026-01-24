@@ -194,8 +194,6 @@ def test_weather_returns_400_when_coordinates_null(weather, api_key):
 
     assert data["message"] == "Nothing to geocode"
 
-    # test with city ID instead of name
-
 
 def test_weather_can_be_requested_by_city_id(weather, api_key):
 
