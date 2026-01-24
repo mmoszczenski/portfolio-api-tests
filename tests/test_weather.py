@@ -167,8 +167,6 @@ def test_weather_returns_success_for_city_long_value(weather, api_key):
 
     assert data["name"] == "Llanfairpwllgwyngyll"
 
-    # test invalid coordinates
-
 
 def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
 
@@ -182,20 +180,31 @@ def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
 
     assert data["message"] == "wrong latitude"
 
-    # test coordingates with None/null values
-
 
 def test_weather_returns_400_when_coordinates_null(weather, api_key):
     pass
 
-    # test with country code
+    lat = None
+    lon = None
+    response = weather.get_weather_by_coordinates(lat, lon, api_key)
 
+    assert response.status_code == 400
 
-def test_weather_can_be_requested_by_country_code(weather, api_key):
-    pass
+    data = response.json()
+
+    assert data["message"] == "Nothing to geocode"
 
     # test with city ID instead of name
 
 
-def test_weahter_can_be_requested_by_city_id(weather, api_key):
-    pass
+def test_weather_can_be_requested_by_city_id(weather, api_key):
+
+    city_ID = 756135
+
+    response = weather.get_weather(city_ID, api_key)
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["name"] == "Warsaw"
