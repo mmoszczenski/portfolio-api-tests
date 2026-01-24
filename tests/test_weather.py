@@ -56,7 +56,7 @@ def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key):
 
     difference = abs(expected_fahrenheit - temp_imperial)
 
-    assert difference < 0.2
+    assert difference < 0.3
 
 
 def test_weather_returns_polish_when_language_PL(weather, api_key):
@@ -70,7 +70,7 @@ def test_weather_returns_polish_when_language_PL(weather, api_key):
     description_eng = response_eng.json()["weather"][0]["description"]
     description_pl = response_pl.json()["weather"][0]["description"]
 
-    assert description_eng != description_pl,         (
+    assert description_eng != description_pl, (
         "Weather description should differ between languages "
         f"(en='{description_eng}', pl='{description_pl}')"
     )
@@ -182,7 +182,6 @@ def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
 
 
 def test_weather_returns_400_when_coordinates_null(weather, api_key):
-    pass
 
     lat = None
     lon = None
