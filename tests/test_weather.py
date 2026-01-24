@@ -157,7 +157,15 @@ def test_weather_returns_400_when_city_param_with_special_characters(weather, ap
 
 
 def test_weather_returns_success_for_city_long_value(weather, api_key):
-    pass
+
+    response = weather.get_weather(
+        "Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch", api_key)
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["name"] == "Llanfairpwllgwyngyll"
 
     # test invalid coordinates
 
