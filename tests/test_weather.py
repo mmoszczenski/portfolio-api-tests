@@ -171,7 +171,16 @@ def test_weather_returns_success_for_city_long_value(weather, api_key):
 
 
 def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
-    pass
+
+    lat = 123123123
+    lon = -98123
+    response = weather.get_weather_by_coordinates(lat, lon, api_key)
+
+    assert response.status_code == 400
+
+    data = response.json()
+
+    assert data["message"] == "wrong latitude"
 
     # test coordingates with None/null values
 
