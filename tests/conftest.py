@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from utils.cities_loader import load_cities
 from utils.schema_loader import load_schema
 
+
 load_dotenv()
 
 
