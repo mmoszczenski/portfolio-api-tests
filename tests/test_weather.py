@@ -2,13 +2,13 @@
 from jsonschema import validate
 
 
-def test_weather_returns_valid_data_for_single_city(weather, api_key):
+def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_reponse):
 
     response = weather.get_weather("Warsaw", api_key)
-    data = response.json()
+    data = assert_reponse(response, )
 
-    assert response.status_code == 200
-    assert data["name"] == "Warsaw"
+    assert "name" in data
+    assert data["name"].lower() == "warsaw"
 
 
 def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, cities):
