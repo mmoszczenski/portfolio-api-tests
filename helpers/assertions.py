@@ -26,7 +26,7 @@ def assert_city_name(data, expected_name: str):
 
     city_name = data.get("name")
 
-    assert city_name is not None (
+    assert city_name is not None, (
         f"Response missing 'name' key"
     )
     assert city_name.lower() == expected_name, (

@@ -1,14 +1,14 @@
 
 from jsonschema import validate
+from helpers.assertions import assert_city_name
 
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_reponse):
 
     response = weather.get_weather("Warsaw", api_key)
-    data = assert_reponse(response, )
+    data = assert_reponse(response)
 
-    assert "name" in data
-    assert data["name"].lower() == "warsaw"
+    assert_city_name(data, "warsaw")
 
 
 def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, cities):
