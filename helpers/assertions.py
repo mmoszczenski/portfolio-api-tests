@@ -20,3 +20,15 @@ def assert_response(response, expected_status: int = 200, expected_type: type = 
     )
 
     return data
+
+
+def assert_city_name(data, expected_name: str):
+
+    city_name = data.get("name")
+
+    assert city_name is not None (
+        f"Response missing 'name' key"
+    )
+    assert city_name.lower() == expected_name, (
+        f"Expected '{expected_name}', got '{city_name}'"
+    )
