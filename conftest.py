@@ -6,6 +6,7 @@ from services.forecast_service import ForecastService
 from dotenv import load_dotenv
 from utils.cities_loader import load_cities
 from utils.schema_loader import load_schema
+from helpers.assertions import assert_response as _assert_response
 
 
 load_dotenv()
@@ -44,3 +45,8 @@ def weather_schema():
 @pytest.fixture
 def forecast_schema():
     return load_schema("forecast_schema.json")
+
+
+@pytest.fixture
+def assert_reponse():
+    return _assert_response
