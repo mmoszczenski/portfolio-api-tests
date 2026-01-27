@@ -1,7 +1,7 @@
 
 from jsonschema import validate
 from helpers.assertions import assert_city_name
-from constants import KELVIN_TO_CELSIUS_DIFFERENCE_TOLERANCE, COORDINATES_DIFFERNECE_TOLERANCE
+from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_DIFFERNECE_TOLERANCE
 
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_response):
@@ -34,9 +34,9 @@ def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_k
 
     difference = abs((temp_default - 273.15) - temp_metric)
 
-    assert difference < KELVIN_TO_CELSIUS_DIFFERENCE_TOLERANCE, (
+    assert difference < TEMPERATURE_CONVERTION_TOLERANCE, (
         f"Temperature difference too large: "
-        f"{difference} vs {KELVIN_TO_CELSIUS_DIFFERENCE_TOLERANCE} allowed"
+        f"{difference} vs {TEMPERATURE_CONVERTION_TOLERANCE} allowed"
         f"Default = {temp_default}K, Metric={temp_metric}C"
     )
 

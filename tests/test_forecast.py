@@ -1,5 +1,5 @@
 from jsonschema import validate
-from constants import KELVIN_TO_CELSIUS_DIFFERENCE_TOLERANCE
+from constants import TEMPERATURE_CONVERTION_TOLERANCE
 
 
 def test_forecast_returns_5_day_forecast_for_city(forecast, api_key, assert_response):
@@ -66,4 +66,4 @@ def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api
 
     difference = abs((temp_k - 273.15) - temp_c)
 
-    assert difference < KELVIN_TO_CELSIUS_DIFFERENCE_TOLERANCE
+    assert difference < TEMPERATURE_CONVERTION_TOLERANCE
