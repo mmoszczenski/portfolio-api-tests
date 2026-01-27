@@ -32,3 +32,8 @@ def assert_city_name(data, expected_name: str):
     assert city_name.lower() == expected_name.lower(), (
         f"Expected '{expected_name}', got '{city_name}'"
     )
+
+
+def assert_error_message(data):
+    assert "message" in data
+    assert data["message"]
