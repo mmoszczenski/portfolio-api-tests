@@ -1,7 +1,7 @@
 
 from jsonschema import validate
 from helpers.assertions import assert_city_name
-from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_TOLERANCE, DEFAULT_CITY
+from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_TOLERANCE, DEFAULT_CITY, DEFAULT_COORDINATES
 
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_response):
@@ -86,8 +86,8 @@ def test_weather_returns_polish_when_language_PL(weather, api_key, assert_respon
 
 def test_weather_can_be_requested_by_lat_and_lon(weather, api_key, assert_response):
 
-    lat = 52.2297
-    lon = 21.0122
+    lat = DEFAULT_COORDINATES["lat"]
+    lon = DEFAULT_COORDINATES["lon"]
 
     response = weather.get_weather_by_coordinates(lat, lon, api_key)
 
