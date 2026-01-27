@@ -1,12 +1,10 @@
 from jsonschema import validate
-from constants import TEMPERATURE_CONVERTION_TOLERANCE
+from constants import TEMPERATURE_CONVERTION_TOLERANCE, DEFAULT_CITY
 
 
 def test_forecast_returns_5_day_forecast_for_city(forecast, api_key, assert_response):
 
-    city = "Warsaw"
-
-    response = forecast.get_forecast(city, api_key)
+    response = forecast.get_forecast(DEFAULT_CITY, api_key)
     data = assert_response(response)
 
     assert "list" in data
@@ -27,12 +25,12 @@ def test_forecast_returns_5_day_forecast_for_city(forecast, api_key, assert_resp
         assert isinstance(entry["weather"], list)
         assert len(entry["weather"]) > 0
 
-    assert data["city"]["name"] == city
+    assert data["city"]["name"] == DEFAULT_CITY
 
 
 def test_forecast_response_matches_schema(forecast, api_key, forecast_schema, assert_response):
 
-    response = forecast.get_forecast("Warsaw", api_key)
+    response = forecast.get_forecast(DEFAULT_CITY, api_key)
 
     data = assert_response(response)
     schema = forecast_schema
@@ -50,10 +48,8 @@ def test_forecast_returns_404_when_city_unknown(forecast, api_key, assert_respon
 
 def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api_key, assert_response):
 
-    city = "Warsaw"
-
-    response_default = forecast.get_forecast(city, api_key)
-    response_metric = forecast.get_forecast(city, api_key, "metric")
+    response_default = forecast.get_forecast(DEFAULT_CITY, api_key)
+    response_metric = forecast.get_forecast(DEFAULT_CITY, api_key, "metric")
 
     data_default = assert_response(response_default)
     data_metric = assert_response(response_metric)
