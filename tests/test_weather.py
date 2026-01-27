@@ -6,10 +6,12 @@ from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_TOLERANCE, D
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_response):
 
-    response = weather.get_weather(DEFAULT_CITY, api_key)
+    city = DEFAULT_CITY
+
+    response = weather.get_weather(city, api_key)
     data = assert_response(response)
 
-    assert_city_name(data, DEFAULT_CITY)
+    assert_city_name(data, city)
 
 
 def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, cities, assert_response):
@@ -23,9 +25,10 @@ def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, citi
 
 def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_key, assert_response):
 
-    response_default = weather.get_weather(DEFAULT_CITY, api_key)
-    response_metric = weather.get_weather(
-        DEFAULT_CITY, api_key, units="metric")
+    city = DEFAULT_CITY
+
+    response_default = weather.get_weather(city, api_key)
+    response_metric = weather.get_weather(city, api_key, units="metric")
 
     assert_response(response_default)
     assert_response(response_metric)
@@ -44,9 +47,10 @@ def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_k
 
 def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key, assert_response):
 
-    response_default = weather.get_weather(DEFAULT_CITY, api_key)
-    response_imperial = weather.get_weather(
-        DEFAULT_CITY, api_key, units="imperial")
+    city = DEFAULT_CITY
+
+    response_default = weather.get_weather(city, api_key)
+    response_imperial = weather.get_weather(city, api_key, units="imperial")
 
     assert_response(response_default)
     assert_response(response_imperial)
@@ -63,8 +67,10 @@ def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key, 
 
 def test_weather_returns_polish_when_language_PL(weather, api_key, assert_response):
 
-    response_eng = weather.get_weather(DEFAULT_CITY, api_key)
-    response_pl = weather.get_weather(DEFAULT_CITY, api_key, lang="pl")
+    city = DEFAULT_CITY
+
+    response_eng = weather.get_weather(city, api_key)
+    response_pl = weather.get_weather(city, api_key, lang="pl")
 
     assert_response(response_eng)
     assert_response(response_pl)
