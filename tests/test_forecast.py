@@ -1,4 +1,5 @@
 from jsonschema import validate
+from constants import KELVIN_TO_CELSIUS_DIFFERENCE_TOLERANCE
 
 
 def test_forecast_returns_5_day_forecast_for_city(forecast, api_key, assert_response):
@@ -54,9 +55,6 @@ def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api
     response_default = forecast.get_forecast(city, api_key)
     response_metric = forecast.get_forecast(city, api_key, "metric")
 
-    assert response_default.status_code == 200
-    assert response_metric.status_code == 200
-
     data_default = assert_response(response_default)
     data_metric = assert_response(response_metric)
 
@@ -68,4 +66,4 @@ def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api
 
     difference = abs((temp_k - 273.15) - temp_c)
 
-    assert difference < 0.3
+    assert difference < KELVIN_TO_CELSIUS_DIFFERENCE_TOLERANCE
