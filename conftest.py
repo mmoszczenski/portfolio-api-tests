@@ -48,5 +48,5 @@ def forecast_schema():
 
 
 @pytest.fixture
-def assert_reponse():
+def assert_response():
     return _assert_response
