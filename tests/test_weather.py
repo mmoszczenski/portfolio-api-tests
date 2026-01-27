@@ -35,7 +35,7 @@ def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_k
 
     assert difference < 0.3, (
         f"Temperature difference too large: "
-        f"{difference} vs 0.2 allowed"
+        f"{difference} vs 0.3 allowed"
         f"Default = {temp_default}K, Metric={temp_metric}C"
     )
 

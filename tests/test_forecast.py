@@ -47,7 +47,7 @@ def test_forecast_returns_404_when_city_unknown(forecast, api_key, assert_respon
     assert "city not found" in data["message"]
 
 
-def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api_key):
+def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api_key, assert_response):
 
     city = "Warsaw"
 
@@ -57,8 +57,8 @@ def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api
     assert response_default.status_code == 200
     assert response_metric.status_code == 200
 
-    data_default = response_default.json()
-    data_metric = response_metric.json()
+    data_default = assert_response(response_default)
+    data_metric = assert_response(response_metric)
 
     default_item = data_default["list"][0]
     metric_item = data_metric["list"][0]
