@@ -2,7 +2,8 @@
 from jsonschema import validate
 from helpers.assertions import assert_city_name
 from helpers.assertions import assert_error_message
-from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_TOLERANCE, DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES
+from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_TOLERANCE
+from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES
 
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_status_code_and_valid_json):
