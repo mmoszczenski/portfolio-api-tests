@@ -107,7 +107,9 @@ def test_weather_can_be_requested_by_lat_and_lon(weather, api_key, assert_respon
 
 def test_weather_response_matches_schema(weather, api_key, weather_schema, assert_response):
 
-    response = weather.get_weather(DEFAULT_CITY, api_key)
+    city = DEFAULT_CITY
+
+    response = weather.get_weather(city, api_key)
     data = assert_response(response)
     schema = weather_schema
 
