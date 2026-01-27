@@ -29,6 +29,6 @@ def assert_city_name(data, expected_name: str):
     assert city_name is not None, (
         f"Response missing 'name' key"
     )
-    assert city_name.lower() == expected_name, (
+    assert city_name.lower() == expected_name.lower(), (
         f"Expected '{expected_name}', got '{city_name}'"
     )

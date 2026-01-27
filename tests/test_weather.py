@@ -11,13 +11,13 @@ def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_rep
     assert_city_name(data, "warsaw")
 
 
-def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, cities):
+def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, cities, assert_reponse):
 
     for city in cities:
         response = weather.get_weather(city, api_key)
-        data = response.json()
-        assert response.status_code == 200
-        assert data["name"].lower() == city.lower()
+        data = assert_reponse(response)
+
+        assert_city_name(data, city)
 
 
 def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_key):
