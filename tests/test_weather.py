@@ -118,7 +118,9 @@ def test_weather_response_matches_schema(weather, api_key, weather_schema, asser
 
 def test_weather_returns_404_for_non_existing_city(weather, api_key, assert_response):
 
-    response = weather.get_weather("NOT_EXISTING_CITY", api_key)
+    city = "NOT_EXISTING_CITY"
+
+    response = weather.get_weather(city, api_key)
     data = assert_response(response, expected_status=404)
 
     assert "city not found" in data["message"]
@@ -135,7 +137,9 @@ def test_weather_returns_400_when_city_param_missing(weather, api_key, assert_re
 
 def test_weather_returns_400_when_city_param_empty_string(weather, api_key, assert_response):
 
-    response = weather.get_weather("", api_key)
+    city = ""
+
+    response = weather.get_weather(city, api_key)
     data = assert_response(response, expected_status=400)
     message = data["message"]
 
@@ -144,7 +148,9 @@ def test_weather_returns_400_when_city_param_empty_string(weather, api_key, asse
 
 def test_weather_returns_400_when_city_param_with_special_characters(weather, api_key, assert_response):
 
-    response = weather.get_weather("Wa%^()*raw", api_key)
+    city = "Wa%^()*raw"
+
+    response = weather.get_weather(city, api_key)
     data = assert_response(response, expected_status=404)
     message = data["message"]
 
@@ -153,8 +159,9 @@ def test_weather_returns_400_when_city_param_with_special_characters(weather, ap
 
 def test_weather_returns_success_for_city_long_value(weather, api_key, assert_response):
 
-    response = weather.get_weather(
-        "Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch", api_key)
+    city = "Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch"
+
+    response = weather.get_weather(city, api_key)
     data = assert_response(response)
 
     assert data["name"] == "Llanfairpwllgwyngyll"
