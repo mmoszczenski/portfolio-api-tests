@@ -35,5 +35,6 @@ def assert_city_name(data, expected_name: str):
 
 
 def assert_error_message(data):
+
     assert "message" in data
     assert data["message"]

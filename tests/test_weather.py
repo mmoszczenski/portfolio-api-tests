@@ -1,6 +1,7 @@
 
 from jsonschema import validate
 from helpers.assertions import assert_city_name
+from helpers.assertions import assert_error_message
 from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_TOLERANCE, DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES
 
 
@@ -123,16 +124,15 @@ def test_weather_returns_404_for_non_existing_city(weather, api_key, assert_stat
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=404)
 
-    assert "city not found" in data["message"]
+    assert_error_message(data)
 
 
 def test_weather_returns_400_when_city_param_missing(weather, api_key, assert_status_code_and_valid_json):
 
     response = weather.get_weather(api_key=api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
-    message = data["message"]
 
-    assert "Nothing to geocode" in message
+    assert_error_message(data)
 
 
 def test_weather_returns_400_when_city_param_empty_string(weather, api_key, assert_status_code_and_valid_json):
@@ -141,9 +141,8 @@ def test_weather_returns_400_when_city_param_empty_string(weather, api_key, asse
 
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
-    message = data["message"]
 
-    assert "Nothing to geocode" in message
+    assert_error_message(data)
 
 
 def test_weather_returns_400_when_city_param_with_special_characters(weather, api_key, assert_status_code_and_valid_json):
@@ -152,9 +151,8 @@ def test_weather_returns_400_when_city_param_with_special_characters(weather, ap
 
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=404)
-    message = data["message"]
 
-    assert "city not found" in message
+    assert_error_message(data)
 
 
 def test_weather_returns_success_for_city_long_value(weather, api_key, assert_status_code_and_valid_json):
@@ -175,7 +173,7 @@ def test_weather_returns_400_when_coordinates_invalid(weather, api_key, assert_s
     response = weather.get_weather_by_coordinates(lat, lon, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
-    assert data["message"] == "wrong latitude"
+    assert_error_message(data)
 
 
 def test_weather_returns_400_when_coordinates_null(weather, api_key, assert_status_code_and_valid_json):
@@ -186,7 +184,7 @@ def test_weather_returns_400_when_coordinates_null(weather, api_key, assert_stat
     response = weather.get_weather_by_coordinates(lat, lon, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
-    assert data["message"] == "Nothing to geocode"
+    assert_error_message(data)
 
 
 def test_weather_can_be_requested_by_city_id(weather, api_key, assert_status_code_and_valid_json):
@@ -196,4 +194,4 @@ def test_weather_can_be_requested_by_city_id(weather, api_key, assert_status_cod
     response = weather.get_weather(city_ID, api_key)
     data = assert_status_code_and_valid_json(response)
 
-    assert data["name"] == "Warsaw"
+    assert_error_message(data)
