@@ -44,7 +44,9 @@ def test_forecast_response_matches_schema(forecast, api_key, forecast_schema, as
 
 def test_forecast_returns_404_when_city_unknown(forecast, api_key, assert_response):
 
-    response = forecast.get_forecast("askjdfhaksdf", api_key)
+    city = "NON_EXISTING_CITY"
+
+    response = forecast.get_forecast(city, api_key)
 
     data = assert_response(response, expected_status=404)
     assert "city not found" in data["message"]
