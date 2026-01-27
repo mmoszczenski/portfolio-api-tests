@@ -3,6 +3,14 @@ from constants import TEMPERATURE_CONVERTION_TOLERANCE, DEFAULT_CITY
 from helpers.assertions import assert_error_message
 
 
+def test_forecast_returns_400_when_city_param_missing(forecast, api_key, assert_status_code_and_valid_json):
+
+    response = forecast.get_forecast(api_key=api_key)
+    data = assert_status_code_and_valid_json(response, expected_status=400)
+
+    assert_error_message(data)
+
+
 def test_forecast_returns_5_day_forecast_for_city(forecast, api_key, assert_status_code_and_valid_json):
 
     city = DEFAULT_CITY
