@@ -2,12 +2,12 @@ from jsonschema import validate
 from constants import TEMPERATURE_CONVERTION_TOLERANCE, DEFAULT_CITY
 
 
-def test_forecast_returns_5_day_forecast_for_city(forecast, api_key, assert_response):
+def test_forecast_returns_5_day_forecast_for_city(forecast, api_key, assert_status_code_and_valid_json):
 
     city = DEFAULT_CITY
 
     response = forecast.get_forecast(city, api_key)
-    data = assert_response(response)
+    data = assert_status_code_and_valid_json(response)
 
     assert "list" in data
     assert isinstance(data["list"], list)
@@ -30,37 +30,37 @@ def test_forecast_returns_5_day_forecast_for_city(forecast, api_key, assert_resp
     assert data["city"]["name"] == city
 
 
-def test_forecast_response_matches_schema(forecast, api_key, forecast_schema, assert_response):
+def test_forecast_response_matches_schema(forecast, api_key, forecast_schema, assert_status_code_and_valid_json):
 
     city = DEFAULT_CITY
 
     response = forecast.get_forecast(city, api_key)
 
-    data = assert_response(response)
+    data = assert_status_code_and_valid_json(response)
     schema = forecast_schema
 
     validate(instance=data, schema=schema)
 
 
-def test_forecast_returns_404_when_city_unknown(forecast, api_key, assert_response):
+def test_forecast_returns_404_when_city_unknown(forecast, api_key, assert_status_code_and_valid_json):
 
     city = "NON_EXISTING_CITY"
 
     response = forecast.get_forecast(city, api_key)
 
-    data = assert_response(response, expected_status=404)
+    data = assert_status_code_and_valid_json(response, expected_status=404)
     assert "city not found" in data["message"]
 
 
-def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api_key, assert_response):
+def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api_key, assert_status_code_and_valid_json):
 
     city = DEFAULT_CITY
 
     response_default = forecast.get_forecast(city, api_key)
     response_metric = forecast.get_forecast(city, api_key, "metric")
 
-    data_default = assert_response(response_default)
-    data_metric = assert_response(response_metric)
+    data_default = assert_status_code_and_valid_json(response_default)
+    data_metric = assert_status_code_and_valid_json(response_metric)
 
     default_item = data_default["list"][0]
     metric_item = data_metric["list"][0]

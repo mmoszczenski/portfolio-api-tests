@@ -1,6 +1,6 @@
 
 
-def assert_response(response, expected_status: int = 200, expected_type: type = dict):
+def assert_status_code_and_valid_json(response, expected_status: int = 200, expected_type: type = dict):
 
     assert response.status_code == expected_status, (
         f"Expected status {expected_status}, got {response.status_code}"
