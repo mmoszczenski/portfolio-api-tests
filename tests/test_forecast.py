@@ -1,14 +1,12 @@
 from jsonschema import validate
 
 
-def test_forecast_returns_5_day_forecast_for_city(forecast, api_key):
+def test_forecast_returns_5_day_forecast_for_city(forecast, api_key, assert_response):
 
     city = "Warsaw"
 
     response = forecast.get_forecast(city, api_key)
-    data = response.json()
-
-    assert response.status_code == 200
+    data = assert_response(response)
 
     assert "list" in data
     assert isinstance(data["list"], list)
@@ -31,23 +29,21 @@ def test_forecast_returns_5_day_forecast_for_city(forecast, api_key):
     assert data["city"]["name"] == city
 
 
-def test_forecast_response_matches_schema(forecast, api_key, forecast_schema):
+def test_forecast_response_matches_schema(forecast, api_key, forecast_schema, assert_response):
 
     response = forecast.get_forecast("Warsaw", api_key)
-    assert response.status_code == 200
 
-    data = response.json()
+    data = assert_response(response)
     schema = forecast_schema
 
     validate(instance=data, schema=schema)
 
 
-def test_forecast_returns_404_when_city_unknown(forecast, api_key):
+def test_forecast_returns_404_when_city_unknown(forecast, api_key, assert_response):
 
     response = forecast.get_forecast("askjdfhaksdf", api_key)
-    assert response.status_code == 404
 
-    data = response.json()
+    data = assert_response(response, expected_status=404)
     assert "city not found" in data["message"]
 
 
