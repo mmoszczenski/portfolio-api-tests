@@ -57,7 +57,7 @@ def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key, 
 
     difference = abs(expected_fahrenheit - temp_imperial)
 
-    assert difference < 0.3
+    assert difference < TEMPERATURE_CONVERTION_TOLERANCE
 
 
 def test_weather_returns_polish_when_language_PL(weather, api_key, assert_response):
