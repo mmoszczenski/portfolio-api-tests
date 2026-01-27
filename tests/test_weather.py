@@ -1,7 +1,7 @@
 
 from jsonschema import validate
 from helpers.assertions import assert_city_name
-from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_DIFFERNECE_TOLERANCE
+from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_TOLERANCE
 
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_response):
@@ -92,8 +92,8 @@ def test_weather_can_be_requested_by_lat_and_lon(weather, api_key, assert_respon
     assert "main" in data
     assert "coord" in data
 
-    assert abs(data["coord"]["lat"] - lat) < COORDINATES_DIFFERNECE_TOLERANCE
-    assert abs(data["coord"]["lon"] - lon) < COORDINATES_DIFFERNECE_TOLERANCE
+    assert abs(data["coord"]["lat"] - lat) < COORDINATES_TOLERANCE
+    assert abs(data["coord"]["lon"] - lon) < COORDINATES_TOLERANCE
 
     assert isinstance(temp, (int, float))
 
