@@ -2,9 +2,11 @@
 from jsonschema import validate
 from helpers.assertions import assert_city_name
 from helpers.assertions import assert_error_message
+from helpers.assertions import assert_within_tolerance
 from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_TOLERANCE
 from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES
-
+from helpers.get_temperature import get_temperature_in_celsius, get_temperature_in_fahrenheit, get_tempeterature_for_city
+from utils.temp_converter import kelvin_to_celsius, kelvin_to_fahrenheit
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_status_code_and_valid_json):
 
@@ -29,22 +31,18 @@ def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_k
 
     city = DEFAULT_CITY
 
-    response_default = weather.get_weather(city, api_key)
-    response_metric = weather.get_weather(city, api_key, units="metric")
+    response_kelvin = weather.get_weather(city, api_key)
+    response_celsius = weather.get_weather(city, api_key, units="metric")
 
-    assert_status_code_and_valid_json(response_default)
-    assert_status_code_and_valid_json(response_metric)
+    assert_status_code_and_valid_json(response_kelvin)
+    assert_status_code_and_valid_json(response_celsius)
 
-    temp_default = response_default.json()["main"]["temp"]
-    temp_metric = response_metric.json()["main"]["temp"]
+    temp_kelvin = get_tempeterature_for_city(city)
+    temp_celsius = get_temperature_in_celsius(city)
+    
+    temp_converted = kelvin_to_celsius(temp_kelvin)
 
-    difference = abs((temp_default - 273.15) - temp_metric)
-
-    assert difference < TEMPERATURE_CONVERTION_TOLERANCE, (
-        f"Temperature difference too large: "
-        f"{difference} vs {TEMPERATURE_CONVERTION_TOLERANCE} allowed"
-        f"Default = {temp_default}K, Metric={temp_metric}C"
-    )
+    assert_within_tolerance(temp_celsius, temp_converted, TEMPERATURE_CONVERTION_TOLERANCE)
 
 
 def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key, assert_status_code_and_valid_json):

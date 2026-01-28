@@ -38,3 +38,10 @@ def assert_error_message(data):
 
     assert "message" in data
     assert data["message"]
+
+
+def assert_within_tolerance(actual, expected, tolerance):
+    
+    difference = abs(actual - expected)
+    
+    assert difference < tolerance
