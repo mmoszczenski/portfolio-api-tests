@@ -146,7 +146,7 @@ def test_weather_returns_400_when_city_param_empty_string(weather, api_key, asse
     assert_error_message(data)
 
 
-def test_weather_returns_400_when_city_param_with_special_characters(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_404_when_city_param_with_special_characters(weather, api_key, assert_status_code_and_valid_json):
 
     city = "Wa%^()*raw"
 
@@ -190,9 +190,9 @@ def test_weather_returns_400_when_coordinates_null(weather, api_key, assert_stat
 
 def test_weather_can_be_requested_by_city_id(weather, api_key, assert_status_code_and_valid_json):
 
-    city_ID = 756135
+    city_id = 756135 # City ID of Warsaw
 
-    response = weather.get_weather(city_ID, api_key)
+    response = weather.get_weather(city_id=city_id, api_key=api_key)
     data = assert_status_code_and_valid_json(response)
 
-    assert_error_message(data)
+    assert_city_name(data, "warsaw")
