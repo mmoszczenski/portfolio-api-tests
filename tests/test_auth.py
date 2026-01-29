@@ -1,6 +1,5 @@
 from constants import DEFAULT_CITY
-from helpers.assertions import assert_city_name, assert_status_code_and_valid_json
-
+from helpers.assertions import assert_city_name
 
 def test_auth_valid_key(weather, api_key, assert_status_code_and_valid_json):
 
