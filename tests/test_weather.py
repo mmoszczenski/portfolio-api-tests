@@ -50,20 +50,18 @@ def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key, 
 
     city = DEFAULT_CITY
 
-    response_default = weather.get_weather(city, api_key)
-    response_imperial = weather.get_weather(city, api_key, units="imperial")
+    response_kelvin = weather.get_weather(city, api_key)
+    response_fahrenheit = weather.get_weather(city, api_key, units="imperial")
 
-    assert_status_code_and_valid_json(response_default)
-    assert_status_code_and_valid_json(response_imperial)
+    assert_status_code_and_valid_json(response_kelvin)
+    assert_status_code_and_valid_json(response_fahrenheit)
 
-    temp_default = response_default.json()["main"]["temp"]
-    temp_imperial = response_imperial.json()["main"]["temp"]
+    temp_kelvin = get_temperature_for_city(weather, api_key, city)
+    temp_fahrenheit = get_temperature_in_fahrenheit(weather, api_key, city)
+    
+    temp_converted = kelvin_to_fahrenheit(temp_kelvin)
 
-    expected_fahrenheit = (temp_default - 273.15) * 1.8 + 32
-
-    difference = abs(expected_fahrenheit - temp_imperial)
-
-    assert difference < TEMPERATURE_CONVERTION_TOLERANCE
+    assert_within_tolerance(temp_fahrenheit, temp_converted, TEMPERATURE_CONVERTION_TOLERANCE)
 
 
 def test_weather_returns_polish_when_language_PL(weather, api_key, assert_status_code_and_valid_json):
