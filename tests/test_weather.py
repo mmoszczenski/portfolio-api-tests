@@ -5,8 +5,9 @@ from helpers.assertions import assert_error_message
 from helpers.assertions import assert_within_tolerance
 from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_TOLERANCE
 from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES
-from helpers.get_temperature import get_temperature_in_celsius, get_temperature_in_fahrenheit, get_tempeterature_for_city
+from helpers.get_temperature import get_temperature_in_celsius, get_temperature_in_fahrenheit, get_temperature_for_city
 from utils.temp_converter import kelvin_to_celsius, kelvin_to_fahrenheit
+from services.weather_service import WeatherService
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_status_code_and_valid_json):
 
@@ -37,8 +38,8 @@ def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_k
     assert_status_code_and_valid_json(response_kelvin)
     assert_status_code_and_valid_json(response_celsius)
 
-    temp_kelvin = get_tempeterature_for_city(city)
-    temp_celsius = get_temperature_in_celsius(city)
+    temp_kelvin = get_temperature_for_city(weather, api_key, city)
+    temp_celsius = get_temperature_in_celsius(weather, api_key, city)
     
     temp_converted = kelvin_to_celsius(temp_kelvin)
 
