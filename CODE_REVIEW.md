@@ -1,141 +1,138 @@
 # Full Code Review — API Tests Portfolio
 
-**Scope:** All project files. Focus: best practices, type hints, helpers/constants/fixtures, test coverage, readability, no duplication.  
-**Context:** API tests only; testing 3rd-party OpenWeatherMap API; no application source code.
+**Scope:** All project files. No code changes; review output only.  
+**Context:** API tests for 3rd-party OpenWeatherMap API; pytest, requests, jsonschema.
 
 ---
 
-## 1. Project structure and organization
+## 1. What’s good
 
-**Good:**
-
-- Clear separation: `services/` (API), `helpers/` (assertions + temperature), `utils/` (loaders, converters), `tests/`, `data/`, `schemas/`.
-- Fixtures centralized in `conftest.py`; tests import assertion helpers directly (no fixture wrapper).
-- Constants in one place; JSON schemas for contract validation; data-driven cities list.
-
-**To improve:**
-
-- **`conftest.py`** still imports `_assert_status_code_and_valid_json` but no longer exposes it as a fixture. Remove the unused import and alias (lines 9–10) to avoid dead code.
-- **`pytest.ini`** has a typo: "tests cases" → "test cases" in marker descriptions (lines 8–11).
-
----
-
-## 2. Functions — do they all make sense?
-
-### 2.1 `helpers/get_temperature.py`
-
-| Function                        | Purpose                                                                            | Verdict                                                                                                                                                                                                                                                                                                         |
-| ------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `get_temperature_for_city`      | Returns `main.temp` from weather or first forecast item depending on service type. | **Makes sense.** Single place to get "current" temp from either API.                                                                                                                                                                                                                                            |
-| `get_temperature_in_celsius`    | Gets Kelvin temp then converts.                                                    | **Makes sense.** But it always calls the API with default units (Kelvin). For consistency with "celsius" you could pass `units="metric"` into `get_temperature_for_city` and then read the value directly instead of converting—would avoid conversion tolerance issues. Optional improvement, not wrong as-is. |
-| `get_temperature_in_fahrenheit` | Same pattern for Fahrenheit.                                                       | **Makes sense.** Same note as above for `units="imperial"`.                                                                                                                                                                                                                                                     |
-
-**Issue:** If `get_temperature_for_city` is called with a type that is neither `WeatherService` nor `ForecastService`, the function exits without returning → returns `None`. Consider raising a clear error, e.g. `raise TypeError("service must be WeatherService or ForecastService")` after the two `if` blocks, so misuse fails fast with a clear message.
-
-**Indentation:** The body of `get_temperature_for_city` (lines 7–13) is over-indented by one level. Should align with the function body (4 spaces from def).
+- **Structure:** Clear separation — `services/`, `helpers/`, `utils/`, `tests/`, `data/`, `schemas/`. Easy to navigate.
+- **Fixtures:** Centralized in `conftest.py`; `client`, `weather`, `forecast`, `cities`, schemas, `api_key`. Good reuse.
+- **Assertions:** Reusable helpers (`assert_status_code_and_valid_json`, `assert_city_name`, `assert_errorr_message_present`, `assert_within_tolerance`, `assert_coordinates_match`) with clear failure messages and `\n` in messages.
+- **Constants:** Tolerances, default city, coordinates, invalid coordinates, `UNKNOWN_CITY`, `DEFAULT_CITY_ID` in one place.
+- **Type hints:** Used in helpers, services, utils, conftest (`list[str]`, `dict`, optional params). Improves readability.
+- **API client:** Has `timeout=10`; avoids hanging on slow 3rd-party API.
+- **Parameter order:** `WeatherService.get_weather(city, api_key, ...)` and `ForecastService.get_forecast(city, api_key, ...)` — consistent; positional `(city, api_key)` works.
+- **Units:** Integration and forecast tests use `units="metric"` correctly (keyword argument).
+- **Auth tests:** Assert both status 401 and message content (`"Invalid" in data["message"]`). Reduces risk of passing for wrong reason.
+- **Schema validation:** JSON schemas used for weather and forecast responses.
+- **Data-driven tests:** `cities.json` + test for all cities.
+- **No debug code:** No stray `print` in `get_temperature.py`.
+- **get_temperature:** Correct `isinstance(WeatherService)` / `isinstance(ForecastService)`; fallback `TypeError`; return type `-> float`.
 
 ---
 
-### 2.2 `helpers/assertions.py`
+## 2. What to improve
 
-| Function                            | Purpose                                                                 | Verdict                                                 |
-| ----------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------- |
-| `assert_status_code_and_valid_json` | Asserts status, parses JSON, optionally checks root type, returns data. | **Makes sense.** Core helper; reduces duplication.      |
-| `assert_city_name`                  | Ensures `data["name"]` matches expected (case-insensitive).             | **Makes sense.** Reused in auth and weather tests.      |
-| `assert_error_message`              | Ensures `data` has a non-empty `message` key.                           | **Makes sense.** Shared for 400/404 error tests.        |
-| `assert_within_tolerance`           | Asserts \|actual − expected\| < tolerance.                              | **Makes sense.** Used for temperatures and coordinates. |
+### 2.1 `api_key` fixture can be `None` — recommended fix (no code change here; document only)
 
-**Typos:**
+**Problem:** `api_key` returns `os.getenv("API_KEY")` → `str | None`. If `API_KEY` is unset or invalid, many tests get 401 and fail in a way that looks like “random test failures” instead of “key missing or invalid”.
 
-- Line 18: `"Expeced"` → **"Expected"**.
-- Line 18: Missing space/newline between the two f-strings in the assertion message (same as in `assert_within_tolerance` below).
+**Recommended fix:** Add a **session-scoped** fixture that runs once per test run and:
 
-**Message formatting:** In `assert_within_tolerance` (lines 55–58), the two f-strings are concatenated with no space. Add `"\n"` or `" "` between them so both parts are readable when the assertion fails.
+1. Reads `key = os.getenv("API_KEY")`.
+2. If `not key or not key.strip()` → `pytest.skip("API_KEY not set. Set it in .env to run tests.")`.
+3. Otherwise builds a one-off `ApiClient` and `WeatherService`, calls `get_weather(DEFAULT_CITY, key)`.
+4. If `response.status_code == 401` → `pytest.skip("API_KEY is invalid or expired. Update .env.")`.
 
----
+Then make the existing `api_key` fixture **depend** on this session-scoped fixture (e.g. name it `_valid_api_key_required` and add it as a parameter: `def api_key(_valid_api_key_required) -> str | None:`). The first test that requests `api_key` will trigger the check; if the key is bad, the whole run is skipped with a clear message. Tests that do not use `api_key` (e.g. `test_auth_no_key_provided`) do not trigger the check.
 
-### 2.3 `services/`
-
-- **ApiClient.get:** Thin wrapper around `requests.get`; builds URL from `BASE_URL` + endpoint. **Makes sense.**
-- **WeatherService / ForecastService:** Build params and delegate to client. **Make sense.**
-- **Missing:** No `timeout` on `requests.get` in `api_client.py`. For production-style tests, add e.g. `timeout=30` (or `(10, 30)`) so the suite does not hang on a slow or stuck 3rd-party API.
+**Where:** `conftest.py`. You need to import `DEFAULT_CITY` from `constants` and add the session-scoped fixture above the `api_key` fixture; then add `_valid_api_key_required` as the first parameter of `api_key`.
 
 ---
 
-### 2.4 `utils/`
+### 2.2 Stronger 400 message check — recommended fix (no code change here; document only)
 
-- **load_json:** Loads JSON from path relative to project root. **Makes sense.**
-- **load_schema:** Wraps load_json with `schemas/` prefix. **Makes sense.**
-- **load_cities:** Wraps load_json for `data/cities.json`. **Makes sense.**
-- **kelvin_to_celsius / kelvin_to_fahrenheit:** Pure conversion. **Make sense.**
+**Problem:** For 400 responses you only assert that the body has a non-empty `"message"` field (`assert_errorr_message_present(data)`). If the API ever returned 400 for a different reason (e.g. invalid key as 400 instead of 401), those tests could still pass even though you intend to test “missing city” or “validation error”.
 
-No function is redundant; each has a clear responsibility.
+**Recommended fix:**
 
----
+1. **New helper in `helpers/assertions.py`:**  
+   `assert_validation_error_message(data: dict, *expected_substrings: str) -> None`
+   - Assert `"message"` in `data`.
+   - Get `msg = data["message"]`; if it’s a string use it, else `str(msg)`; normalize to lowercase.
+   - Assert that at least one of `expected_substrings` (case-insensitive) appears in that string.
+   - On failure, raise with a message like: expected one of `expected_substrings`, got `data["message"]`.
 
-### 4.2 Fixtures
+2. **Use it in 400 tests that are about missing/invalid city:**  
+   After `assert_errorr_message_present(data)` add:  
+   `assert_validation_error_message(data, "geocode", "nothing", "city")`  
+   in:
+   - `test_weather_returns_400_when_city_param_missing`
+   - `test_weather_returns_400_when_city_param_empty_string`
+   - `test_forecast_returns_400_when_city_param_missing`
 
-- **Optional fixture:** `valid_weather_response(weather, api_key)` in conftest that returns already-validated weather JSON for DEFAULT_CITY. Not strictly necessary; current "get response then assert" is clear. Only add if you see repeated "get weather for default city and assert success" in many tests.
-- **api_key when missing:** If `API_KEY` is unset, tests that need it fail inside the test with a generic error. Consider a fixture that checks `os.getenv("API_KEY")` and calls `pytest.skip(reason="API_KEY not set")` or `pytest.exit()` so the reason is obvious. Document in README that API_KEY is required for most tests.
+   OpenWeatherMap typically returns something like “Nothing to geocode” for missing/empty city, so one of these substrings should match.
 
-## 5. Test coverage and suggested additional tests
-
-**Principle:** Do not duplicate. If weather already checks a behavior (e.g. 400 when city missing), forecast does not need the same test unless the API contract differs.
-
-### 5.2 Gaps / suggested additions (without duplicating weather)
-
-3. **Edge cases (optional)**
-   - **Weather:** Response time or timeout (e.g. with `pytest-timeout` or a simple `assert response.elapsed.total_seconds() < 10`). Put in `test_perf.py` and mark as `@pytest.mark.slow` or `@pytest.mark.perf` so it can be excluded in quick runs.
-   - **Rate limiting / 429:** If the 3rd-party API can return 429, one test that at least handles it (e.g. skip or expect) could be useful. Only if relevant.
-
-4. **test_perf.py**
-   - File is empty. Either remove it or add at least one test (e.g. "weather response returns within X seconds") and mark it (e.g. `@pytest.mark.perf`). Register the marker in `pytest.ini` to avoid warnings. Avoid leaving an empty test file
+3. **Optional:** For 400 tests about **coordinates** (invalid lat/lon, null), you can add a similar call with substrings that match the API’s coordinate-error message (e.g. `"invalid"`, `"coord"`, `"limit"`), or leave them with only `assert_errorr_message_present(data)`.
 
 ---
 
-## 6. File-by-file specifics
+### 2.4 `test_perf.py` is empty
 
-### 6.2 `conftest.py`
-
-- Consider failing or skipping when `API_KEY` is missing (see 4.2).
-
-### 6.10 `tests/test_weather.py`
-
-- Line 76–77: You use `response_eng.json()` and `response_pl.json()` after `assert_status_code_and_valid_json` has already parsed the body. Consider storing the returned `data` from the assertion and using it (e.g. `data_eng["weather"][0]["description"]`) to avoid double parsing and to be consistent with other tests.
-
-### 6.11 `tests/test_forecast.py`
-
-- Use `UNKNOWN_CITY` constant (line 55) once added to constants.
-- Line 79: Inline conversion `(temp_k - 273.15)` could use `kelvin_to_celsius(temp_k)` from utils for consistency (optional).
-
-### 6.12 `tests/test_integration_weather_vs_forecast.py`
-
-- Use constant for tolerance, e.g. `WEATHER_FORECAST_TEMPERATURE_TOLERANCE` from constants, instead of local `tolerance = 1.5`.
-- Consider adding `@pytest.mark.integration` so you can run e.g. `pytest -m "not integration"` for fast feedback.
-
-### 6.13 `tests/test_auth.py`
-
-- No issues; consider using `UNKNOWN_CITY` only if you ever switch auth tests to a different city (not required).
-
-### 6.14 `tests/test_perf.py`
-
-- Either add at least one performance-related test (and register marker) or delete the file.
-
-### 6.15 `data/cities.json`
-
-- Add trailing newline at end of file (common convention).
-
-### 6.16 `pytest.ini`
-
-- Fix marker descriptions: "tests cases" → "test cases".
+Either add at least one performance-related test (e.g. assert response time below a threshold, with a marker like `@pytest.mark.perf`) and register the marker in `pytest.ini`, or remove the file so the suite does not contain an empty test module.
 
 ---
 
-## 8. Checklist (no code changes from reviewer)
+### 2.5 README.md
 
-- [ ] Add constants: UNKNOWN_CITY, WEATHER_FORECAST_TEMPERATURE_TOLERANCE, DEFAULT_CITY_ID (or WARSAW_CITY_ID).
-- [ ] Use those constants in test_weather.py, test_forecast.py, test_integration_weather_vs_forecast.py.
-- [ ] Either implement one test in test_perf.py (with marker) or remove the file.
-- [ ] Optional: assert_response_matches_schema helper; assert_coordinates_match; @pytest.mark.integration; reuse data from assert_status_code_and_valid_json in test_weather_returns_polish_when_language_PL.
+Currently only “# blank for now”. For a portfolio, consider adding:
 
-End of code review.
+- Short description (e.g. “API tests for OpenWeatherMap”).
+- How to run: `pytest`, optionally `pytest tests/ -v`.
+- That `API_KEY` must be set (e.g. in `.env`).
+- Optional: one-line overview of layout (services, helpers, tests, data, schemas).
+
+---
+
+### 2.6 requirements.txt encoding
+
+If the file was saved as UTF-16 or with a BOM, it can cause issues on some systems. Save as **UTF-8** (no BOM). Ensure one dependency per line (e.g. `requests`, `pytest`, `python-dotenv`, `jsonschema`) with versions as desired.
+
+---
+
+### 2.7 Minor style
+
+- **constants.py** line 6: `# Warsaw` — already has space after `#`; no change needed.
+- **api_client.py:** Consider a blank line between `import requests` and `class ApiClient` (PEP 8).
+- **assertions.py:** Trailing blank lines at end of file (lines 75–76); optional to trim.
+- **utils/temp_converter.py:** No leading/trailing blank lines; good.
+
+---
+
+### 2.8 Optional: pytest markers
+
+If you want to run subsets (e.g. exclude integration), add `@pytest.mark.integration` to `test_integration_weather_vs_forecast.py` and ensure the marker is registered in `pytest.ini`. Current `pytest.ini` already lists `integration`; just use the marker in the test if you need it.
+
+---
+
+## 3. Summary table
+
+| Area             | Status  | Action                                                                             |
+| ---------------- | ------- | ---------------------------------------------------------------------------------- |
+| Structure / flow | Good    | None.                                                                              |
+| API key handling | Improve | Add session-scoped validation fixture; make `api_key` depend on it (see 2.1).      |
+| 400 verification | Improve | Add `assert_validation_error_message` and use in city-related 400 tests (see 2.2). |
+| Polish test      | Minor   | Reuse `data` from assertion instead of calling `.json()` again (see 2.3).          |
+| test_perf.py     | Pending | Add one perf test + marker or remove file (see 2.4).                               |
+| README           | Minimal | Add description, run instructions, API_KEY (see 2.5).                              |
+| requirements.txt | Check   | Ensure UTF-8 and correct deps (see 2.6).                                           |
+| Style            | Minor   | Optional PEP 8 tweaks (see 2.7).                                                   |
+
+---
+
+## 4. Checklist (for you to implement; no code changes in this review)
+
+- [ ] **conftest.py:** Add session-scoped fixture `_valid_api_key_required` (check key set + one request; skip if missing or 401). Make `api_key` depend on it.
+- [ ] **helpers/assertions.py:** Add `assert_validation_error_message(data, *expected_substrings)` and use `\n` in its error message.
+- [ ] **tests/test_weather.py:** In city-related 400 tests, after `assert_errorr_message_present(data)` add `assert_validation_error_message(data, "geocode", "nothing", "city")`. In Polish-language test, reuse `data_eng` / `data_pl` from assertion instead of `.json()`.
+- [ ] **tests/test_forecast.py:** In `test_forecast_returns_400_when_city_param_missing`, after `assert_errorr_message_present(data)` add `assert_validation_error_message(data, "geocode", "nothing", "city")`.
+- [ ] **test_perf.py:** Add at least one perf test (e.g. response time) and register marker, or remove the file.
+- [ ] **README.md:** Add short description, run instructions, API_KEY requirement.
+- [ ] **requirements.txt:** Save as UTF-8; verify dependency list.
+- [ ] **Optional:** Add `@pytest.mark.integration` to integration test if you run subsets; optional PEP 8 cleanups (blank line in api_client, trim trailing blanks in assertions).
+
+---
+
+End of code review. No code was modified; only this file (CODE_REVIEW.md) was written.

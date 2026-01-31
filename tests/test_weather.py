@@ -1,11 +1,11 @@
 from jsonschema import validate
 from helpers.assertions import assert_city_name
-from helpers.assertions import assert_error_message
+from helpers.assertions import assert_errorr_message_present
 from helpers.assertions import assert_within_tolerance
 from helpers.assertions import assert_status_code_and_valid_json
-from helpers. assertions import assert_coordinates_match
+from helpers.assertions import assert_coordinates_match
 from constants import TEMPERATURE_CONVERSION_TOLERANCE, COORDINATES_TOLERANCE
-from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES, DEFAULT_CITY_ID, UNKOWN_CITY
+from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES, DEFAULT_CITY_ID, UNKNOWN_CITY
 from helpers.get_temperature import get_temperature_in_celsius, get_temperature_in_fahrenheit, get_temperature_for_city
 from utils.temp_converter import kelvin_to_celsius, kelvin_to_fahrenheit
 
@@ -71,11 +71,11 @@ def test_weather_returns_polish_when_language_PL(weather, api_key):
     response_eng = weather.get_weather(city, api_key)
     response_pl = weather.get_weather(city, api_key, lang="pl")
 
-    assert_status_code_and_valid_json(response_eng)
-    assert_status_code_and_valid_json(response_pl)
+    data_eng = assert_status_code_and_valid_json(response_eng)
+    data_pl = assert_status_code_and_valid_json(response_pl)
 
-    description_eng = response_eng.json()["weather"][0]["description"]
-    description_pl = response_pl.json()["weather"][0]["description"]
+    description_eng = data_eng["weather"][0]["description"]
+    description_pl = data_pl["weather"][0]["description"]
 
     assert description_eng != description_pl, (
         "Weather description should differ between languages "
@@ -112,12 +112,12 @@ def test_weather_response_matches_schema(weather, api_key, weather_schema):
 
 def test_weather_returns_404_for_non_existing_city(weather, api_key):
 
-    city = UNKOWN_CITY
+    city = UNKNOWN_CITY
 
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=404)
 
-    assert_error_message(data)
+    assert_errorr_message_present(data)
 
 
 def test_weather_returns_400_when_city_param_missing(weather, api_key):
@@ -125,7 +125,7 @@ def test_weather_returns_400_when_city_param_missing(weather, api_key):
     response = weather.get_weather(api_key=api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
-    assert_error_message(data)
+    assert_errorr_message_present(data)
 
 
 def test_weather_returns_400_when_city_param_empty_string(weather, api_key):
@@ -135,7 +135,7 @@ def test_weather_returns_400_when_city_param_empty_string(weather, api_key):
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
-    assert_error_message(data)
+    assert_errorr_message_present(data)
 
 
 def test_weather_returns_404_when_city_param_with_special_characters(weather, api_key):
@@ -145,7 +145,7 @@ def test_weather_returns_404_when_city_param_with_special_characters(weather, ap
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=404)
 
-    assert_error_message(data)
+    assert_errorr_message_present(data)
 
 
 def test_weather_returns_success_for_city_long_value(weather, api_key):
@@ -166,7 +166,7 @@ def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
     response = weather.get_weather_by_coordinates(lat, lon, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
-    assert_error_message(data)
+    assert_errorr_message_present(data)
 
 
 def test_weather_returns_400_when_coordinates_null(weather, api_key):
@@ -177,7 +177,7 @@ def test_weather_returns_400_when_coordinates_null(weather, api_key):
     response = weather.get_weather_by_coordinates(lat, lon, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
-    assert_error_message(data)
+    assert_errorr_message_present(data)
 
 
 def test_weather_can_be_requested_by_city_id(weather, api_key):

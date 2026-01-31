@@ -31,7 +31,7 @@ def forecast(client) -> ForecastService:
 
 
 @pytest.fixture
-def cities() -> list:
+def cities() -> list[str]:
     return load_cities()
 
 

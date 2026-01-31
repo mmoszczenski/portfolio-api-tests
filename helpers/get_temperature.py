@@ -13,7 +13,6 @@ def get_temperature_for_city(
     
     if isinstance(service, WeatherService):
         response = service.get_weather(city=city, lat=lat, lon=lon, api_key=api_key, units=units)
-        print(response.json())
         return response.json()["main"]["temp"]
         
     if isinstance(service, ForecastService):

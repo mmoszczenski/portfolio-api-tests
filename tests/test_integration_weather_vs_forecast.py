@@ -7,8 +7,8 @@ def test_weather_and_forecast_return_consistent_temperature(weather, forecast, a
     city = DEFAULT_CITY
     tolerance = WEATHER_FORECAST_TEMPERATURE_TOLERANCE
 
-    weather_response = weather.get_weather(city, api_key, "metric")
-    forecast_response = forecast.get_forecast(city, api_key, "metric")
+    weather_response = weather.get_weather(city, api_key, units="metric")
+    forecast_response = forecast.get_forecast(city, api_key, units="metric")
 
     assert_status_code_and_valid_json(weather_response)
     assert_status_code_and_valid_json(forecast_response)
