@@ -9,7 +9,10 @@ from constants import TEMPERATURE_CONVERSION_TOLERANCE, COORDINATES_TOLERANCE
 from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES, DEFAULT_CITY_ID, UNKNOWN_CITY
 from helpers.get_temperature import get_temperature_in_celsius, get_temperature_in_fahrenheit, get_temperature_for_city
 from utils.temp_converter import kelvin_to_celsius, kelvin_to_fahrenheit
+import pytest
 
+@pytest.mark.weather
+@pytest.mark.positive
 def test_weather_returns_valid_data_for_single_city(weather, api_key):
 
     city = DEFAULT_CITY
@@ -19,7 +22,8 @@ def test_weather_returns_valid_data_for_single_city(weather, api_key):
 
     assert_city_name(data, city)
 
-
+@pytest.mark.weather
+@pytest.mark.positive
 def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, cities):
 
     for city in cities:
@@ -28,8 +32,10 @@ def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, citi
 
         assert_city_name(data, city)
 
-
+@pytest.mark.weather
+@pytest.mark.positive
 def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_key):
+    
 
     city = DEFAULT_CITY
 
@@ -45,9 +51,11 @@ def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_k
     temp_converted = kelvin_to_celsius(temp_kelvin)
 
     assert_within_tolerance(temp_celsius, temp_converted, TEMPERATURE_CONVERSION_TOLERANCE)
-
-
+    
+@pytest.mark.weather
+@pytest.mark.positive
 def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key):
+    
 
     city = DEFAULT_CITY
 
@@ -63,9 +71,11 @@ def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key):
     temp_converted = kelvin_to_fahrenheit(temp_kelvin)
 
     assert_within_tolerance(temp_fahrenheit, temp_converted, TEMPERATURE_CONVERSION_TOLERANCE)
-
-
+    
+@pytest.mark.weather
+@pytest.mark.positive
 def test_weather_returns_polish_when_language_PL(weather, api_key):
+    
 
     city = DEFAULT_CITY
 
@@ -82,10 +92,11 @@ def test_weather_returns_polish_when_language_PL(weather, api_key):
         "Weather description should differ between languages "
         f"(en='{description_eng}', pl='{description_pl}')"
     )
-
-
+    
+@pytest.mark.weather
+@pytest.mark.positive
 def test_weather_can_be_requested_by_lat_and_lon(weather, api_key):
-
+    
     lat = DEFAULT_COORDINATES["lat"]
     lon = DEFAULT_COORDINATES["lon"] 
     tolerance = COORDINATES_TOLERANCE
@@ -98,8 +109,9 @@ def test_weather_can_be_requested_by_lat_and_lon(weather, api_key):
 
     assert_coordinates_match(lat, lon, data["coord"]["lat"], data["coord"]["lon"], tolerance)
     assert isinstance(temp, (int, float))
-
-
+    
+@pytest.mark.weather
+@pytest.mark.positive
 def test_weather_response_matches_schema(weather, api_key, weather_schema):
 
     city = DEFAULT_CITY
@@ -110,7 +122,8 @@ def test_weather_response_matches_schema(weather, api_key, weather_schema):
 
     validate(instance=data, schema=schema)
 
-
+@pytest.mark.weather
+@pytest.mark.negative
 def test_weather_returns_404_for_non_existing_city(weather, api_key):
 
     city = UNKNOWN_CITY
@@ -122,7 +135,8 @@ def test_weather_returns_404_for_non_existing_city(weather, api_key):
     assert_errorr_message_present(data)
     assert_error_message(data, error_substring)
 
-
+@pytest.mark.weather
+@pytest.mark.negative
 def test_weather_returns_400_when_city_param_missing(weather, api_key):
 
     error_substring = "geocode"
@@ -133,7 +147,8 @@ def test_weather_returns_400_when_city_param_missing(weather, api_key):
     assert_errorr_message_present(data)
     assert_error_message(data, error_substring)
 
-
+@pytest.mark.weather
+@pytest.mark.negative
 def test_weather_returns_400_when_city_param_empty_string(weather, api_key):
 
     city = ""
@@ -145,7 +160,8 @@ def test_weather_returns_400_when_city_param_empty_string(weather, api_key):
     assert_errorr_message_present(data)
     assert_error_message(data, error_substring)
 
-
+@pytest.mark.weather
+@pytest.mark.negative
 def test_weather_returns_404_when_city_param_with_special_characters(weather, api_key):
 
     city = "Wa%^()*raw"
@@ -157,7 +173,8 @@ def test_weather_returns_404_when_city_param_with_special_characters(weather, ap
     assert_errorr_message_present(data)
     assert_error_message(data, error_substring)
 
-
+@pytest.mark.weather
+@pytest.mark.positive
 def test_weather_returns_success_for_city_long_value(weather, api_key):
 
     city = "Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch"
@@ -167,7 +184,8 @@ def test_weather_returns_success_for_city_long_value(weather, api_key):
 
     assert data["name"] == "Llanfairpwllgwyngyll"
 
-
+@pytest.mark.weather
+@pytest.mark.negative
 def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
 
     lat = INVALID_COORDINATES["lat"]
@@ -180,7 +198,8 @@ def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
     assert_errorr_message_present(data)
     assert_error_message(data, error_substring)
 
-
+@pytest.mark.weather
+@pytest.mark.negative
 def test_weather_returns_400_when_coordinates_null(weather, api_key):
 
     lat = None
@@ -193,7 +212,8 @@ def test_weather_returns_400_when_coordinates_null(weather, api_key):
     assert_errorr_message_present(data)
     assert_error_message(data, error_substring)
 
-
+@pytest.mark.weather
+@pytest.mark.positive
 def test_weather_can_be_requested_by_city_id(weather, api_key):
 
     city_id = DEFAULT_CITY_ID
