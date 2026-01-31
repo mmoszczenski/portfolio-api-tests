@@ -85,8 +85,6 @@ No function is redundant; each has a clear responsibility.
 | **utils/schema_loader.py** | `load_schema(name)` | `name: str`, return e.g. `-> dict` (JSON Schema is an object). |
 | **utils/cities_loader.py** | `load_cities()` | `-> list` (list of city strings). |
 
-| **conftest.py** | `weather_schema()` / `forecast_schema()` | `-> dict`. |
-
 ### 3.2 Style
 
 - **temp_converter.py:** Use space after colon in type hints: `kelvin: float` instead of `kelvin:float` (PEP 8).
