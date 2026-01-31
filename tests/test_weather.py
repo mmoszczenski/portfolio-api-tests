@@ -4,6 +4,7 @@ from helpers.assertions import assert_errorr_message_present
 from helpers.assertions import assert_within_tolerance
 from helpers.assertions import assert_status_code_and_valid_json
 from helpers.assertions import assert_coordinates_match
+from helpers.assertions import assert_error_message
 from constants import TEMPERATURE_CONVERSION_TOLERANCE, COORDINATES_TOLERANCE
 from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES, DEFAULT_CITY_ID, UNKNOWN_CITY
 from helpers.get_temperature import get_temperature_in_celsius, get_temperature_in_fahrenheit, get_temperature_for_city
@@ -113,39 +114,48 @@ def test_weather_response_matches_schema(weather, api_key, weather_schema):
 def test_weather_returns_404_for_non_existing_city(weather, api_key):
 
     city = UNKNOWN_CITY
+    error_substring = "city"
 
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=404)
 
     assert_errorr_message_present(data)
+    assert_error_message(data, error_substring)
 
 
 def test_weather_returns_400_when_city_param_missing(weather, api_key):
 
+    error_substring = "geocode"
+    
     response = weather.get_weather(api_key=api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
     assert_errorr_message_present(data)
+    assert_error_message(data, error_substring)
 
 
 def test_weather_returns_400_when_city_param_empty_string(weather, api_key):
 
     city = ""
+    error_substring = "geocode"
 
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
     assert_errorr_message_present(data)
+    assert_error_message(data, error_substring)
 
 
 def test_weather_returns_404_when_city_param_with_special_characters(weather, api_key):
 
     city = "Wa%^()*raw"
+    error_substring = "city"
 
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=404)
 
     assert_errorr_message_present(data)
+    assert_error_message(data, error_substring)
 
 
 def test_weather_returns_success_for_city_long_value(weather, api_key):
@@ -162,22 +172,26 @@ def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
 
     lat = INVALID_COORDINATES["lat"]
     lon = INVALID_COORDINATES["lon"]
+    error_substring = "wrong"
 
     response = weather.get_weather_by_coordinates(lat, lon, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
     assert_errorr_message_present(data)
+    assert_error_message(data, error_substring)
 
 
 def test_weather_returns_400_when_coordinates_null(weather, api_key):
 
     lat = None
     lon = None
+    error_substring = "geocode"
 
     response = weather.get_weather_by_coordinates(lat, lon, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
     assert_errorr_message_present(data)
+    assert_error_message(data, error_substring)
 
 
 def test_weather_can_be_requested_by_city_id(weather, api_key):

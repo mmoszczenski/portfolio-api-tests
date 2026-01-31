@@ -1,16 +1,19 @@
 from jsonschema import validate
 from constants import TEMPERATURE_CONVERSION_TOLERANCE, DEFAULT_CITY, UNKNOWN_CITY
-from helpers.assertions import assert_errorr_message_present, assert_status_code_and_valid_json, assert_within_tolerance
+from helpers.assertions import assert_errorr_message_present, assert_status_code_and_valid_json, assert_within_tolerance, assert_error_message
 from helpers.get_temperature import get_temperature_for_city, get_temperature_in_celsius
 from utils.temp_converter import kelvin_to_celsius
 
 
 def test_forecast_returns_400_when_city_param_missing(forecast, api_key):
 
+    error_substring = "nothing"
+    
     response = forecast.get_forecast(api_key=api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
     assert_errorr_message_present(data)
+    assert_error_message(data, error_substring)
 
 
 def test_forecast_returns_5_day_forecast_for_city(forecast, api_key):
@@ -56,12 +59,14 @@ def test_forecast_response_matches_schema(forecast, api_key, forecast_schema):
 def test_forecast_returns_404_when_city_unknown(forecast, api_key):
 
     city = UNKNOWN_CITY
+    error_substring = "city"
 
     response = forecast.get_forecast(city, api_key)
 
     data = assert_status_code_and_valid_json(response, expected_status=404)
 
     assert_errorr_message_present(data)
+    assert_error_message(data, error_substring)
 
 
 def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api_key):
