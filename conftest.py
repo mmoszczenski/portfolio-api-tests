@@ -10,7 +10,7 @@ from utils.schema_loader import load_schema
 load_dotenv()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def api_key(weather) -> str | None:
     
     key = os.getenv("API_KEY")
