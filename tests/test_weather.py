@@ -1,4 +1,3 @@
-
 from jsonschema import validate
 from helpers.assertions import assert_city_name
 from helpers.assertions import assert_error_message

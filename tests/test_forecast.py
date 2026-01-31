@@ -1,6 +1,8 @@
 from jsonschema import validate
 from constants import TEMPERATURE_CONVERSION_TOLERANCE, DEFAULT_CITY, UNKOWN_CITY
-from helpers.assertions import assert_error_message, assert_status_code_and_valid_json
+from helpers.assertions import assert_error_message, assert_status_code_and_valid_json, assert_within_tolerance
+from helpers.get_temperature import get_temperature_for_city, get_temperature_in_celsius
+from utils.temp_converter import kelvin_to_celsius
 
 
 def test_forecast_returns_400_when_city_param_missing(forecast, api_key):
@@ -66,18 +68,16 @@ def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api
 
     city = DEFAULT_CITY
 
-    response_default = forecast.get_forecast(city, api_key)
-    response_metric = forecast.get_forecast(city, api_key, "metric")
+    response_kelvin = forecast.get_forecast(city, api_key)
+    response_celsius = forecast.get_forecast(city, api_key, "metric")
 
-    data_default = assert_status_code_and_valid_json(response_default)
-    data_metric = assert_status_code_and_valid_json(response_metric)
+    assert_status_code_and_valid_json(response_kelvin)
+    assert_status_code_and_valid_json(response_celsius)
 
-    default_item = data_default["list"][0]
-    metric_item = data_metric["list"][0]
+    temp_kelvin = get_temperature_for_city(forecast, api_key, city)
+    temp_celsius = get_temperature_in_celsius(forecast, api_key, city)
+    
+    temp_converted = kelvin_to_celsius(temp_kelvin)
 
-    temp_k = default_item["main"]["temp"]
-    temp_c = metric_item["main"]["temp"]
-
-    difference = abs((temp_k - 273.15) - temp_c)
-
-    assert difference < TEMPERATURE_CONVERSION_TOLERANCE
+    assert_within_tolerance(temp_celsius, temp_converted, TEMPERATURE_CONVERSION_TOLERANCE)
+    

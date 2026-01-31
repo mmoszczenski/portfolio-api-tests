@@ -78,101 +78,29 @@ No function is redundant; each has a clear responsibility.
 - **Optional fixture:** `valid_weather_response(weather, api_key)` in conftest that returns already-validated weather JSON for DEFAULT_CITY. Not strictly necessary; current "get response then assert" is clear. Only add if you see repeated "get weather for default city and assert success" in many tests.
 - **api_key when missing:** If `API_KEY` is unset, tests that need it fail inside the test with a generic error. Consider a fixture that checks `os.getenv("API_KEY")` and calls `pytest.skip(reason="API_KEY not set")` or `pytest.exit()` so the reason is obvious. Document in README that API_KEY is required for most tests.
 
-### 4.3 Helpers
-
-- **Coordinates assertion:** In `test_weather_can_be_requested_by_lat_and_lon` you have:
-  - `assert abs(data["coord"]["lat"] - lat) < COORDINATES_TOLERANCE`
-  - `assert abs(data["coord"]["lon"] - lon) < COORDINATES_TOLERANCE`
-    A helper `assert_coordinates_match(data["coord"], lat, lon, COORDINATES_TOLERANCE)` would make the test more readable and reuse the tolerance logic. Optional.
-
----
-
 ## 5. Test coverage and suggested additional tests
 
 **Principle:** Do not duplicate. If weather already checks a behavior (e.g. 400 when city missing), forecast does not need the same test unless the API contract differs.
 
-### 5.1 Already well covered
-
-- **Auth:** Valid key, invalid key, no key, key with whitespace (weather only is enough; same API key for forecast).
-- **Weather:** Single city, all cities, units (metric/imperial), lang, by coords, by city id, schema, 404/400 cases, empty string, special chars, long name, invalid/null coords.
-- **Forecast:** Missing city (400), happy path (5-day structure, order, schema), unknown city (404), units metric.
-- **Integration:** Weather vs forecast temperature consistency.
-
 ### 5.2 Gaps / suggested additions (without duplicating weather)
-
-1. **Forecast-specific**
-   - **Forecast without city but with api_key returns 400:** You have this. Good.
-   - **Forecast with invalid API key returns 401:** You test auth on weather only; one 401 test is enough for the whole API. Optional: add a single test in `test_forecast.py` that forecast with invalid key returns 401, if you want each module to be self-contained. Otherwise skip.
-   - **Forecast with empty city string:** Weather has it; forecast might behave the same. Only add if you want to document forecast’s behavior explicitly (low priority).
-
-2. **Integration**
-   - **Same city in weather and forecast:** You already assert temperature consistency. Optionally assert that `forecast_data["city"]["name"]` matches the requested city to tie the integration test to the same location.
 
 3. **Edge cases (optional)**
    - **Weather:** Response time or timeout (e.g. with `pytest-timeout` or a simple `assert response.elapsed.total_seconds() < 10`). Put in `test_perf.py` and mark as `@pytest.mark.slow` or `@pytest.mark.perf` so it can be excluded in quick runs.
    - **Rate limiting / 429:** If the 3rd-party API can return 429, one test that at least handles it (e.g. skip or expect) could be useful. Only if relevant.
 
 4. **test_perf.py**
-   - File is empty. Either remove it or add at least one test (e.g. "weather response returns within X seconds") and mark it (e.g. `@pytest.mark.perf`). Register the marker in `pytest.ini` to avoid warnings. Avoid leaving an empty test file.
-
-### 5.3 Tests not recommended (avoid duplication)
-
-- Do not add forecast tests for: invalid key, no key, 400 missing city, 404 unknown city, schema, units—weather (and existing forecast tests) already cover the same API contract. Only add forecast-specific variants if the API docs say forecast behaves differently.
+   - File is empty. Either remove it or add at least one test (e.g. "weather response returns within X seconds") and mark it (e.g. `@pytest.mark.perf`). Register the marker in `pytest.ini` to avoid warnings. Avoid leaving an empty test file
 
 ---
 
 ## 6. File-by-file specifics
 
-### 6.1 `constants.py`
-
-- Leading blank line (line 1): remove.
-- Consider adding: `UNKNOWN_CITY`, `WEATHER_FORECAST_TEMPERATURE_TOLERANCE`, `DEFAULT_CITY_ID` (or `WARSAW_CITY_ID`) as above.
-
 ### 6.2 `conftest.py`
 
-- Remove unused import and alias: `assert_status_code_and_valid_json` / `_assert_status_code_and_valid_json`.
 - Consider failing or skipping when `API_KEY` is missing (see 4.2).
-
-### 6.3 `helpers/assertions.py`
-
-- Fix typo: "Expeced" → "Expected".
-- Add newline or space between the two f-strings in the `assert isinstance(...)` message (line 17–19) and in `assert_within_tolerance` (lines 56–58).
-- Add type hints (see section 3).
-
-### 6.4 `helpers/get_temperature.py`
-
-- Fix indentation of the body of `get_temperature_for_city` (one level less).
-- If `service` is neither `WeatherService` nor `ForecastService`, raise `TypeError` instead of returning `None`.
-- Add type hints for all parameters (see section 3).
-
-### 6.5 `services/api_client.py`
-
-- Add `timeout=30` (or similar) to `requests.get`.
-- Add parameter type hints for `endpoint` and `params`.
-- Blank line between `import requests` and `class ApiClient` (PEP 8).
-
-### 6.6 `services/weather_service.py` & `forecast_service.py`
-
-- Add type hints for `client` in `__init__` and for all method parameters (see section 3).
-
-### 6.7 `utils/temp_converter.py`
-
-- Use `kelvin: float` (space after colon).
-- Remove trailing blank lines at end of file (lines 9–11).
-
-### 6.8 `utils/json_loader.py`
-
-- Add return type, e.g. `-> Union[dict, list]`.
-- Optionally document or handle missing file (e.g. clearer error message); not mandatory.
-
-### 6.9 `utils/schema_loader.py` & `cities_loader.py`
-
-- Add return type hints (see section 3).
 
 ### 6.10 `tests/test_weather.py`
 
-- Line 1: remove leading blank line.
-- Line 191: use constant for Warsaw city ID (e.g. `DEFAULT_CITY_ID`) and use `UNKNOWN_CITY` for 404 tests (lines 120, etc.) once defined.
 - Line 76–77: You use `response_eng.json()` and `response_pl.json()` after `assert_status_code_and_valid_json` has already parsed the body. Consider storing the returned `data` from the assertion and using it (e.g. `data_eng["weather"][0]["description"]`) to avoid double parsing and to be consistent with other tests.
 
 ### 6.11 `tests/test_forecast.py`
