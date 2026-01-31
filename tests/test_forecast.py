@@ -1,5 +1,5 @@
 from jsonschema import validate
-from constants import TEMPERATURE_CONVERTION_TOLERANCE, DEFAULT_CITY
+from constants import TEMPERATURE_CONVERSION_TOLERANCE, DEFAULT_CITY
 from helpers.assertions import assert_error_message
 
 
@@ -80,4 +80,4 @@ def test_forecast_returns_temperature_in_celsius_when_units_metric(forecast, api
 
     difference = abs((temp_k - 273.15) - temp_c)
 
-    assert difference < TEMPERATURE_CONVERTION_TOLERANCE
+    assert difference < TEMPERATURE_CONVERSION_TOLERANCE

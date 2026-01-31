@@ -3,7 +3,7 @@ from jsonschema import validate
 from helpers.assertions import assert_city_name
 from helpers.assertions import assert_error_message
 from helpers.assertions import assert_within_tolerance
-from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_TOLERANCE
+from constants import TEMPERATURE_CONVERSION_TOLERANCE, COORDINATES_TOLERANCE
 from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES
 from helpers.get_temperature import get_temperature_in_celsius, get_temperature_in_fahrenheit, get_temperature_for_city
 from utils.temp_converter import kelvin_to_celsius, kelvin_to_fahrenheit
@@ -42,7 +42,7 @@ def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_k
     
     temp_converted = kelvin_to_celsius(temp_kelvin)
 
-    assert_within_tolerance(temp_celsius, temp_converted, TEMPERATURE_CONVERTION_TOLERANCE)
+    assert_within_tolerance(temp_celsius, temp_converted, TEMPERATURE_CONVERSION_TOLERANCE)
 
 
 def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key, assert_status_code_and_valid_json):
@@ -60,7 +60,7 @@ def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key, 
     
     temp_converted = kelvin_to_fahrenheit(temp_kelvin)
 
-    assert_within_tolerance(temp_fahrenheit, temp_converted, TEMPERATURE_CONVERTION_TOLERANCE)
+    assert_within_tolerance(temp_fahrenheit, temp_converted, TEMPERATURE_CONVERSION_TOLERANCE)
 
 
 def test_weather_returns_polish_when_language_PL(weather, api_key, assert_status_code_and_valid_json):
