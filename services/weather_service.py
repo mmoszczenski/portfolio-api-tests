@@ -10,6 +10,8 @@ class WeatherService:
     def get_weather(
         self, 
         city: str | None = None,
+        lat: float | None = None,
+        lon: float | None = None,
         api_key: str | None = None, 
         units: str | None = None, 
         lang: str | None = None, 
@@ -20,6 +22,10 @@ class WeatherService:
 
         if city is not None:
             params["q"] = city
+        if lat is not None:
+            params["lat"] = lat
+        if lon is not None:
+            params["lon"] = lon
         if api_key is not None:
             params["appid"] = api_key
         if units is not None:

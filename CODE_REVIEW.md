@@ -73,25 +73,6 @@ No function is redundant; each has a clear responsibility.
 
 ---
 
-## 3. Type hints — where missing and whether to add
-
-**Best practice for this repo:** Type hints improve readability, enable static checking (mypy, Pyright), and document contracts. For a portfolio and maintainability, adding them is recommended, especially on public helpers and services.
-
-
-
-## 4. Helpers, constants, and fixtures for readability
-
-### 4.1 Constants to introduce
-
-| Constant              | Current usage                                                | Suggested name                           | File           |
-| --------------------- | ------------------------------------------------------------ | ---------------------------------------- | -------------- |
-| `1.5`                 | Integration test tolerance (weather vs forecast temp)        | `WEATHER_FORECAST_TEMPERATURE_TOLERANCE` | `constants.py` |
-| `756135`              | Warsaw city ID in `test_weather_can_be_requested_by_city_id` | `DEFAULT_CITY_ID` or `WARSAW_CITY_ID`    | `constants.py` |
-| `"NON_EXISTING_CITY"` | test_forecast (404)                                          | `UNKNOWN_CITY`                           | `constants.py` |
-| `"NOT_EXISTING_CITY"` | test_weather (404)                                           | Same `UNKNOWN_CITY`                      | `constants.py` |
-
-Using one `UNKNOWN_CITY` in both test files avoids magic strings and keeps naming consistent.
-
 ### 4.2 Fixtures
 
 - **Optional fixture:** `valid_weather_response(weather, api_key)` in conftest that returns already-validated weather JSON for DEFAULT_CITY. Not strictly necessary; current "get response then assert" is clear. Only add if you see repeated "get weather for default city and assert success" in many tests.
@@ -99,10 +80,6 @@ Using one `UNKNOWN_CITY` in both test files avoids magic strings and keeps namin
 
 ### 4.3 Helpers
 
-- **Schema validation pattern:** In tests you often do:
-  - `data = assert_status_code_and_valid_json(response)`
-  - `validate(instance=data, schema=schema)`
-    You could add a small helper, e.g. `assert_response_matches_schema(response, schema, expected_status=200)` that does both and returns `data`. This would shorten schema tests and keep the pattern in one place. Optional.
 - **Coordinates assertion:** In `test_weather_can_be_requested_by_lat_and_lon` you have:
   - `assert abs(data["coord"]["lat"] - lat) < COORDINATES_TOLERANCE`
   - `assert abs(data["coord"]["lon"] - lon) < COORDINATES_TOLERANCE`
@@ -225,7 +202,6 @@ Using one `UNKNOWN_CITY` in both test files avoids magic strings and keeps namin
 - Fix marker descriptions: "tests cases" → "test cases".
 
 ---
-
 
 ## 8. Checklist (no code changes from reviewer)
 

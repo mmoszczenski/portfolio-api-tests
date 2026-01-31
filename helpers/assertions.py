@@ -54,3 +54,22 @@ def assert_within_tolerance(actual: float, expected: float, tolerance: float):
         f"Difference too big. Expected {expected}, got {actual}/n"
         f"Difference is {difference}, allowed tolerance is {tolerance}"
     )
+    
+def assert_coordinates_match(expected_lat: float, expected_lon: float, actual_lat: float, actual_lon: float, tolerance: float):
+    
+    lat_difference = abs(actual_lat - expected_lat)
+    
+    assert lat_difference <= tolerance, (
+        f"Difference too big. Expected lat: {expected_lat}, got {actual_lat}/n"
+        f"Difference is {lat_difference}, allowed tolerance is {tolerance}"
+    )
+    
+    lon_difference = abs(actual_lon - expected_lon)
+    
+    assert lon_difference <= tolerance, (
+        f"Difference too big. Expected lon: {expected_lon}, got {actual_lon}/n"
+        f"Difference is {lon_difference}, allowed tolerance is {tolerance}"
+    )
+    
+    
+    

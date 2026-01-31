@@ -4,6 +4,7 @@ from helpers.assertions import assert_city_name
 from helpers.assertions import assert_error_message
 from helpers.assertions import assert_within_tolerance
 from helpers.assertions import assert_status_code_and_valid_json
+from helpers. assertions import assert_coordinates_match
 from constants import TEMPERATURE_CONVERSION_TOLERANCE, COORDINATES_TOLERANCE
 from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES, DEFAULT_CITY_ID, UNKOWN_CITY
 from helpers.get_temperature import get_temperature_in_celsius, get_temperature_in_fahrenheit, get_temperature_for_city
@@ -86,21 +87,16 @@ def test_weather_returns_polish_when_language_PL(weather, api_key):
 def test_weather_can_be_requested_by_lat_and_lon(weather, api_key):
 
     lat = DEFAULT_COORDINATES["lat"]
-    lon = DEFAULT_COORDINATES["lon"]
+    lon = DEFAULT_COORDINATES["lon"] 
+    tolerance = COORDINATES_TOLERANCE
 
     response = weather.get_weather_by_coordinates(lat, lon, api_key)
 
     data = assert_status_code_and_valid_json(response)
 
-    temp = data["main"]["temp"]
+    temp = get_temperature_for_city(weather, api_key=api_key, lat=lat, lon=lon)
 
-    assert "weather" in data
-    assert "main" in data
-    assert "coord" in data
-
-    assert abs(data["coord"]["lat"] - lat) < COORDINATES_TOLERANCE
-    assert abs(data["coord"]["lon"] - lon) < COORDINATES_TOLERANCE
-
+    assert_coordinates_match(lat, lon, data["coord"]["lat"], data["coord"]["lon"], tolerance)
     assert isinstance(temp, (int, float))
 
 
