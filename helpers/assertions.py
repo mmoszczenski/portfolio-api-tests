@@ -2,7 +2,7 @@
 def assert_status_code_and_valid_json(response, expected_status: int = 200, expected_type: type = dict):
 
     assert response.status_code == expected_status, (
-        f"Expected status {expected_status}, got {response.status_code}"
+        f"Expected status {expected_status}, got {response.status_code}\n"
         f"Response text: {response.text}"
     )
 
@@ -14,7 +14,7 @@ def assert_status_code_and_valid_json(response, expected_status: int = 200, expe
         ) from exc
 
     assert isinstance(data, expected_type), (
-        f"Expected response type {expected_type}, got {type(data)}"
+        f"Expeced response type {expected_type}, got {type(data)}"
         f"Response data: {data}"
     )
 

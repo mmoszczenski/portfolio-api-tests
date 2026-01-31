@@ -1,4 +1,7 @@
 from constants import DEFAULT_CITY
+from helpers.get_temperature import get_temperature_for_city
+from helpers.assertions import assert_within_tolerance
+from constants import TEMPERATURE_CONVERSION_TOLERANCE
 
 
 def test_weather_and_forecast_return_consistent_temperature(weather, forecast, api_key, assert_status_code_and_valid_json):
@@ -9,12 +12,10 @@ def test_weather_and_forecast_return_consistent_temperature(weather, forecast, a
     weather_response = weather.get_weather(city, api_key, "metric")
     forecast_response = forecast.get_forecast(city, api_key, "metric")
 
-    weather_data = assert_status_code_and_valid_json(weather_response)
-    forecast_data = assert_status_code_and_valid_json(forecast_response)
+    assert_status_code_and_valid_json(weather_response)
+    assert_status_code_and_valid_json(forecast_response)
 
-    current_temp = weather_data["main"]["temp"]
-    forecast_temp = forecast_data["list"][0]["main"]["temp"]
+    current_temp = get_temperature_for_city(weather, api_key, city)
+    forecast_temp = get_temperature_for_city(forecast, api_key, city)
 
-    difference = abs(current_temp - forecast_temp)
-
-    assert difference < tolerance, ()
+    assert current_temp - forecast_temp <= tolerance
