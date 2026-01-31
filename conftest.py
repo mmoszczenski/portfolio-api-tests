@@ -6,8 +6,6 @@ from services.forecast_service import ForecastService
 from dotenv import load_dotenv
 from utils.cities_loader import load_cities
 from utils.schema_loader import load_schema
-from helpers.assertions import assert_status_code_and_valid_json as _assert_status_code_and_valid_json
-
 
 load_dotenv()
 

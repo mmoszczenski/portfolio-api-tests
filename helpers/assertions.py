@@ -14,7 +14,7 @@ def assert_status_code_and_valid_json(response, expected_status: int = 200, expe
         ) from exc
 
     assert isinstance(data, expected_type), (
-        f"Expeced response type {expected_type}, got {type(data)}"
+        f"Expected response type {expected_type}, got {type(data)}/n"
         f"Response data: {data}"
     )
 
@@ -36,12 +36,12 @@ def assert_city_name(data, expected_name: str):
 def assert_error_message(data):
 
     assert "message" in data, (
-        f"Response JSON does not contain 'message' field. "
+        f"Response JSON does not contain 'message' field./n"
         f"Got keys: {list(data.keys())}, full response: {data}"
     )
     
     assert data["message"], (
-        f"'message' field is empty or falsy. "
+        f"'message' field is empty or falsy./n "
         f"Value: {data['message']!r}, full response: {data}"
     )
 
@@ -50,6 +50,6 @@ def assert_within_tolerance(actual, expected, tolerance):
     difference = abs(actual - expected)
     assert difference < tolerance, (
         
-        f"Difference too big. Expected {expected}, got {actual}"
+        f"Difference too big. Expected {expected}, got {actual}/n"
         f"Difference is {difference}, allowed tolerance is {tolerance}"
     )
