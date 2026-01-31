@@ -101,7 +101,7 @@ def test_weather_can_be_requested_by_lat_and_lon(weather, api_key):
     lon = DEFAULT_COORDINATES["lon"] 
     tolerance = COORDINATES_TOLERANCE
 
-    response = weather.get_weather_by_coordinates(lat, lon, api_key)
+    response = weather.get_weather(api_key=api_key, lat=lat, lon=lon)
 
     data = assert_status_code_and_valid_json(response)
 
@@ -192,7 +192,7 @@ def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
     lon = INVALID_COORDINATES["lon"]
     error_substring = "wrong"
 
-    response = weather.get_weather_by_coordinates(lat, lon, api_key)
+    response = weather.get_weather(api_key=api_key, lat=lat, lon=lon)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
     assert_error_message_present(data)
@@ -206,7 +206,7 @@ def test_weather_returns_400_when_coordinates_null(weather, api_key):
     lon = None
     error_substring = "geocode"
 
-    response = weather.get_weather_by_coordinates(lat, lon, api_key)
+    response = weather.get_weather(api_key=api_key, lat=lat, lon=lon)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
     assert_error_message_present(data)

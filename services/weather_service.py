@@ -36,13 +36,3 @@ class WeatherService:
             params["id"] = city_id
 
         return self.client.get("/weather", params=params)
-
-    def get_weather_by_coordinates(self, lat: float, lon: float, api_key: str) -> requests.Response:
-        
-        params = {
-            "lat": lat,
-            "lon": lon,
-            "appid": api_key
-        }
-
-        return self.client.get("/weather", params=params)
