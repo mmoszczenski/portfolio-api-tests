@@ -46,7 +46,3 @@ def weather_schema():
 def forecast_schema():
     return load_schema("forecast_schema.json")
 
-
-@pytest.fixture
-def assert_status_code_and_valid_json():
-    return _assert_status_code_and_valid_json

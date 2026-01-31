@@ -3,12 +3,13 @@ from jsonschema import validate
 from helpers.assertions import assert_city_name
 from helpers.assertions import assert_error_message
 from helpers.assertions import assert_within_tolerance
+from helpers.assertions import assert_status_code_and_valid_json
 from constants import TEMPERATURE_CONVERSION_TOLERANCE, COORDINATES_TOLERANCE
 from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES
 from helpers.get_temperature import get_temperature_in_celsius, get_temperature_in_fahrenheit, get_temperature_for_city
 from utils.temp_converter import kelvin_to_celsius, kelvin_to_fahrenheit
 
-def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_valid_data_for_single_city(weather, api_key):
 
     city = DEFAULT_CITY
 
@@ -18,7 +19,7 @@ def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_sta
     assert_city_name(data, city)
 
 
-def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, cities, assert_status_code_and_valid_json):
+def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, cities):
 
     for city in cities:
         response = weather.get_weather(city, api_key)
@@ -27,7 +28,7 @@ def test_weather_returns_valid_data_for_all_tested_cities(weather, api_key, citi
         assert_city_name(data, city)
 
 
-def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_key):
 
     city = DEFAULT_CITY
 
@@ -45,7 +46,7 @@ def test_weather_returns_temperature_in_celsius_when_units_metric(weather, api_k
     assert_within_tolerance(temp_celsius, temp_converted, TEMPERATURE_CONVERSION_TOLERANCE)
 
 
-def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key):
 
     city = DEFAULT_CITY
 
@@ -63,7 +64,7 @@ def test_weather_returns_temperature_in_f_when_units_imperial(weather, api_key, 
     assert_within_tolerance(temp_fahrenheit, temp_converted, TEMPERATURE_CONVERSION_TOLERANCE)
 
 
-def test_weather_returns_polish_when_language_PL(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_polish_when_language_PL(weather, api_key):
 
     city = DEFAULT_CITY
 
@@ -82,7 +83,7 @@ def test_weather_returns_polish_when_language_PL(weather, api_key, assert_status
     )
 
 
-def test_weather_can_be_requested_by_lat_and_lon(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_can_be_requested_by_lat_and_lon(weather, api_key):
 
     lat = DEFAULT_COORDINATES["lat"]
     lon = DEFAULT_COORDINATES["lon"]
@@ -103,7 +104,7 @@ def test_weather_can_be_requested_by_lat_and_lon(weather, api_key, assert_status
     assert isinstance(temp, (int, float))
 
 
-def test_weather_response_matches_schema(weather, api_key, weather_schema, assert_status_code_and_valid_json):
+def test_weather_response_matches_schema(weather, api_key, weather_schema):
 
     city = DEFAULT_CITY
 
@@ -114,7 +115,7 @@ def test_weather_response_matches_schema(weather, api_key, weather_schema, asser
     validate(instance=data, schema=schema)
 
 
-def test_weather_returns_404_for_non_existing_city(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_404_for_non_existing_city(weather, api_key):
 
     city = "NOT_EXISTING_CITY"
 
@@ -124,7 +125,7 @@ def test_weather_returns_404_for_non_existing_city(weather, api_key, assert_stat
     assert_error_message(data)
 
 
-def test_weather_returns_400_when_city_param_missing(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_400_when_city_param_missing(weather, api_key):
 
     response = weather.get_weather(api_key=api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
@@ -132,7 +133,7 @@ def test_weather_returns_400_when_city_param_missing(weather, api_key, assert_st
     assert_error_message(data)
 
 
-def test_weather_returns_400_when_city_param_empty_string(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_400_when_city_param_empty_string(weather, api_key):
 
     city = ""
 
@@ -142,7 +143,7 @@ def test_weather_returns_400_when_city_param_empty_string(weather, api_key, asse
     assert_error_message(data)
 
 
-def test_weather_returns_404_when_city_param_with_special_characters(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_404_when_city_param_with_special_characters(weather, api_key):
 
     city = "Wa%^()*raw"
 
@@ -152,7 +153,7 @@ def test_weather_returns_404_when_city_param_with_special_characters(weather, ap
     assert_error_message(data)
 
 
-def test_weather_returns_success_for_city_long_value(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_success_for_city_long_value(weather, api_key):
 
     city = "Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch"
 
@@ -162,7 +163,7 @@ def test_weather_returns_success_for_city_long_value(weather, api_key, assert_st
     assert data["name"] == "Llanfairpwllgwyngyll"
 
 
-def test_weather_returns_400_when_coordinates_invalid(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
 
     lat = INVALID_COORDINATES["lat"]
     lon = INVALID_COORDINATES["lon"]
@@ -173,7 +174,7 @@ def test_weather_returns_400_when_coordinates_invalid(weather, api_key, assert_s
     assert_error_message(data)
 
 
-def test_weather_returns_400_when_coordinates_null(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_returns_400_when_coordinates_null(weather, api_key):
 
     lat = None
     lon = None
@@ -184,7 +185,7 @@ def test_weather_returns_400_when_coordinates_null(weather, api_key, assert_stat
     assert_error_message(data)
 
 
-def test_weather_can_be_requested_by_city_id(weather, api_key, assert_status_code_and_valid_json):
+def test_weather_can_be_requested_by_city_id(weather, api_key):
 
     city_id = 756135 # City ID of Warsaw
 

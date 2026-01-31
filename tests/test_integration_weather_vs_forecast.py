@@ -1,8 +1,8 @@
 from constants import DEFAULT_CITY
 from helpers.get_temperature import get_temperature_for_city
-from helpers.assertions import assert_within_tolerance
+from helpers.assertions import assert_within_tolerance, assert_status_code_and_valid_json
 
-def test_weather_and_forecast_return_consistent_temperature(weather, forecast, api_key, assert_status_code_and_valid_json):
+def test_weather_and_forecast_return_consistent_temperature(weather, forecast, api_key):
 
     city = DEFAULT_CITY
     tolerance = 1.5
