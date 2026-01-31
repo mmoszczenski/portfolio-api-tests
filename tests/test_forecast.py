@@ -1,6 +1,6 @@
 from jsonschema import validate
 from constants import TEMPERATURE_CONVERSION_TOLERANCE, DEFAULT_CITY, UNKNOWN_CITY
-from helpers.assertions import assert_error_message_present, assert_status_code_and_valid_json, assert_within_tolerance, assert_error_message
+from helpers.assertions import assert_error_message_present, assert_status_code_and_valid_json, assert_within_tolerance, assert_error_message, assert_city_name
 from helpers.get_temperature import get_temperature_for_city, get_temperature_in_celsius
 from utils.temp_converter import kelvin_to_celsius
 import pytest
