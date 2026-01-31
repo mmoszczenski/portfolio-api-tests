@@ -7,7 +7,14 @@ class ForecastService:
     def __init__(self, client: ApiClient):
         self.client = client
 
-    def get_forecast(self, city: str | None = None, api_key: str | None = None, units: str | None = None) -> requests.Response:
+    def get_forecast(
+        self, 
+        city: str | None = None,
+        api_key: str | None = None,
+        lat: float | None = None,
+        lon: float | None = None,
+        units: str | None = None
+        ) -> requests.Response:
 
         params = {}
 
@@ -15,6 +22,10 @@ class ForecastService:
             params["q"] = city
         if api_key is not None:
             params["appid"] = api_key
+        if lat is not None:
+            params["lat"] = lat
+        if lon is not None:
+            params["lon"] = lon
         if units is not None:
             params["units"] = units
 
