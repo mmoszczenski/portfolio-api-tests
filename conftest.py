@@ -11,7 +11,7 @@ load_dotenv()
 
 
 @pytest.fixture
-def api_key():
+def api_key() -> str | None:
     return os.getenv("API_KEY")
 
 
@@ -31,16 +31,16 @@ def forecast(client) -> ForecastService:
 
 
 @pytest.fixture
-def cities():
+def cities() -> list:
     return load_cities()
 
 
 @pytest.fixture
-def weather_schema():
+def weather_schema() -> dict:
     return load_schema("weather_schema.json")
 
 
 @pytest.fixture
-def forecast_schema():
+def forecast_schema() -> dict:
     return load_schema("forecast_schema.json")
 

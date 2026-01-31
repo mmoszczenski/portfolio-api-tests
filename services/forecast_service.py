@@ -1,12 +1,13 @@
 import requests
+from services.api_client import ApiClient
 
 
 class ForecastService:
 
-    def __init__(self, client):
+    def __init__(self, client: ApiClient):
         self.client = client
 
-    def get_forecast(self, city=None, api_key=None, units=None) -> requests.Response:
+    def get_forecast(self, city: str | None = None, api_key: str | None = None, units: str | None = None) -> requests.Response:
 
         params = {}
 

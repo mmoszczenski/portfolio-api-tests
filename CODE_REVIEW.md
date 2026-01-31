@@ -8,11 +8,13 @@
 ## 1. Project structure and organization
 
 **Good:**
+
 - Clear separation: `services/` (API), `helpers/` (assertions + temperature), `utils/` (loaders, converters), `tests/`, `data/`, `schemas/`.
 - Fixtures centralized in `conftest.py`; tests import assertion helpers directly (no fixture wrapper).
 - Constants in one place; JSON schemas for contract validation; data-driven cities list.
 
 **To improve:**
+
 - **`conftest.py`** still imports `_assert_status_code_and_valid_json` but no longer exposes it as a fixture. Remove the unused import and alias (lines 9–10) to avoid dead code.
 - **`pytest.ini`** has a typo: "tests cases" → "test cases" in marker descriptions (lines 8–11).
 
@@ -22,11 +24,11 @@
 
 ### 2.1 `helpers/get_temperature.py`
 
-| Function | Purpose | Verdict |
-|----------|--------|--------|
-| `get_temperature_for_city` | Returns `main.temp` from weather or first forecast item depending on service type. | **Makes sense.** Single place to get "current" temp from either API. |
-| `get_temperature_in_celsius` | Gets Kelvin temp then converts. | **Makes sense.** But it always calls the API with default units (Kelvin). For consistency with "celsius" you could pass `units="metric"` into `get_temperature_for_city` and then read the value directly instead of converting—would avoid conversion tolerance issues. Optional improvement, not wrong as-is. |
-| `get_temperature_in_fahrenheit` | Same pattern for Fahrenheit. | **Makes sense.** Same note as above for `units="imperial"`. |
+| Function                        | Purpose                                                                            | Verdict                                                                                                                                                                                                                                                                                                         |
+| ------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `get_temperature_for_city`      | Returns `main.temp` from weather or first forecast item depending on service type. | **Makes sense.** Single place to get "current" temp from either API.                                                                                                                                                                                                                                            |
+| `get_temperature_in_celsius`    | Gets Kelvin temp then converts.                                                    | **Makes sense.** But it always calls the API with default units (Kelvin). For consistency with "celsius" you could pass `units="metric"` into `get_temperature_for_city` and then read the value directly instead of converting—would avoid conversion tolerance issues. Optional improvement, not wrong as-is. |
+| `get_temperature_in_fahrenheit` | Same pattern for Fahrenheit.                                                       | **Makes sense.** Same note as above for `units="imperial"`.                                                                                                                                                                                                                                                     |
 
 **Issue:** If `get_temperature_for_city` is called with a type that is neither `WeatherService` nor `ForecastService`, the function exits without returning → returns `None`. Consider raising a clear error, e.g. `raise TypeError("service must be WeatherService or ForecastService")` after the two `if` blocks, so misuse fails fast with a clear message.
 
@@ -36,14 +38,15 @@
 
 ### 2.2 `helpers/assertions.py`
 
-| Function | Purpose | Verdict |
-|----------|--------|--------|
-| `assert_status_code_and_valid_json` | Asserts status, parses JSON, optionally checks root type, returns data. | **Makes sense.** Core helper; reduces duplication. |
-| `assert_city_name` | Ensures `data["name"]` matches expected (case-insensitive). | **Makes sense.** Reused in auth and weather tests. |
-| `assert_error_message` | Ensures `data` has a non-empty `message` key. | **Makes sense.** Shared for 400/404 error tests. |
-| `assert_within_tolerance` | Asserts \|actual − expected\| < tolerance. | **Makes sense.** Used for temperatures and coordinates. |
+| Function                            | Purpose                                                                 | Verdict                                                 |
+| ----------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------- |
+| `assert_status_code_and_valid_json` | Asserts status, parses JSON, optionally checks root type, returns data. | **Makes sense.** Core helper; reduces duplication.      |
+| `assert_city_name`                  | Ensures `data["name"]` matches expected (case-insensitive).             | **Makes sense.** Reused in auth and weather tests.      |
+| `assert_error_message`              | Ensures `data` has a non-empty `message` key.                           | **Makes sense.** Shared for 400/404 error tests.        |
+| `assert_within_tolerance`           | Asserts \|actual − expected\| < tolerance.                              | **Makes sense.** Used for temperatures and coordinates. |
 
 **Typos:**
+
 - Line 18: `"Expeced"` → **"Expected"**.
 - Line 18: Missing space/newline between the two f-strings in the assertion message (same as in `assert_within_tolerance` below).
 
@@ -53,17 +56,17 @@
 
 ### 2.3 `services/`
 
-- **ApiClient.get:** Thin wrapper around `requests.get`; builds URL from `BASE_URL` + endpoint. **Makes sense.**  
-- **WeatherService / ForecastService:** Build params and delegate to client. **Make sense.**  
+- **ApiClient.get:** Thin wrapper around `requests.get`; builds URL from `BASE_URL` + endpoint. **Makes sense.**
+- **WeatherService / ForecastService:** Build params and delegate to client. **Make sense.**
 - **Missing:** No `timeout` on `requests.get` in `api_client.py`. For production-style tests, add e.g. `timeout=30` (or `(10, 30)`) so the suite does not hang on a slow or stuck 3rd-party API.
 
 ---
 
 ### 2.4 `utils/`
 
-- **load_json:** Loads JSON from path relative to project root. **Makes sense.**  
-- **load_schema:** Wraps load_json with `schemas/` prefix. **Makes sense.**  
-- **load_cities:** Wraps load_json for `data/cities.json`. **Makes sense.**  
+- **load_json:** Loads JSON from path relative to project root. **Makes sense.**
+- **load_schema:** Wraps load_json with `schemas/` prefix. **Makes sense.**
+- **load_cities:** Wraps load_json for `data/cities.json`. **Makes sense.**
 - **kelvin_to_celsius / kelvin_to_fahrenheit:** Pure conversion. **Make sense.**
 
 No function is redundant; each has a clear responsibility.
@@ -77,25 +80,11 @@ No function is redundant; each has a clear responsibility.
 ### 3.1 Currently missing (recommended to add)
 
 | File | Location | Suggested annotation |
-|------|----------|----------------------|
-| **helpers/get_temperature.py** | `get_temperature_for_city(service, ...)` | `service: Union[WeatherService, ForecastService]` (or `WeatherService \| ForecastService` on 3.10+). |
-| **helpers/get_temperature.py** | `api_key`, `city`, `units` | `api_key: str`, `city: str`, `units: Optional[str] = None`. |
-| **helpers/get_temperature.py** | `get_temperature_in_celsius` / `get_temperature_in_fahrenheit` params | Same: `service`, `api_key`, `city` as above. Return type `-> float` already present. |
-| **helpers/assertions.py** | `assert_status_code_and_valid_json(response, ...)` | `response: requests.Response`, `expected_status: int = 200`, `expected_type: type = dict` → return type e.g. `-> dict` (or `Union[dict, list]` if you ever pass list). |
-| **helpers/assertions.py** | `assert_city_name(data, expected_name)` | `data: dict`, `expected_name: str`. |
-| **helpers/assertions.py** | `assert_error_message(data)` | `data: dict`. |
-| **helpers/assertions.py** | `assert_within_tolerance(actual, expected, tolerance)` | `actual: float`, `expected: float`, `tolerance: float`. |
-| **services/api_client.py** | `get(self, endpoint, params=None)` | `endpoint: str`, `params: Optional[dict] = None`. |
-| **services/weather_service.py** | `__init__(self, client)` | `client: ApiClient`. |
-| **services/weather_service.py** | `get_weather(...)` | `city: Optional[str] = None`, `api_key: Optional[str] = None`, `units: Optional[str] = None`, `lang: Optional[str] = None`, `city_id: Optional[int] = None`. |
-| **services/weather_service.py** | `get_weather_by_coordinates(self, lat, lon, api_key)` | `lat: float`, `lon: float`, `api_key: str`. |
-| **services/forecast_service.py** | `__init__(self, client)` | `client: ApiClient`. |
-| **services/forecast_service.py** | `get_forecast(...)` | `city: Optional[str] = None`, `api_key: Optional[str] = None`, `units: Optional[str] = None`. |
-| **utils/json_loader.py** | `load_json(relative_path)` | Return type e.g. `-> Union[dict, list]` (JSON root can be object or array). |
+| ---- | -------- | -------------------- |
+
 | **utils/schema_loader.py** | `load_schema(name)` | `name: str`, return e.g. `-> dict` (JSON Schema is an object). |
 | **utils/cities_loader.py** | `load_cities()` | `-> list` (list of city strings). |
-| **conftest.py** | `api_key()` | `-> Optional[str]` (or `-> str` if you later fail when missing). |
-| **conftest.py** | `cities()` | `-> list` (list of str). |
+
 | **conftest.py** | `weather_schema()` / `forecast_schema()` | `-> dict`. |
 
 ### 3.2 Style
@@ -113,12 +102,12 @@ Adding the above hints is good practice: they document the API, help IDEs, and a
 
 ### 4.1 Constants to introduce
 
-| Constant | Current usage | Suggested name | File |
-|----------|----------------|----------------|------|
-| `1.5` | Integration test tolerance (weather vs forecast temp) | `WEATHER_FORECAST_TEMPERATURE_TOLERANCE` | `constants.py` |
-| `756135` | Warsaw city ID in `test_weather_can_be_requested_by_city_id` | `DEFAULT_CITY_ID` or `WARSAW_CITY_ID` | `constants.py` |
-| `"NON_EXISTING_CITY"` | test_forecast (404) | `UNKNOWN_CITY` | `constants.py` |
-| `"NOT_EXISTING_CITY"` | test_weather (404) | Same `UNKNOWN_CITY` | `constants.py` |
+| Constant              | Current usage                                                | Suggested name                           | File           |
+| --------------------- | ------------------------------------------------------------ | ---------------------------------------- | -------------- |
+| `1.5`                 | Integration test tolerance (weather vs forecast temp)        | `WEATHER_FORECAST_TEMPERATURE_TOLERANCE` | `constants.py` |
+| `756135`              | Warsaw city ID in `test_weather_can_be_requested_by_city_id` | `DEFAULT_CITY_ID` or `WARSAW_CITY_ID`    | `constants.py` |
+| `"NON_EXISTING_CITY"` | test_forecast (404)                                          | `UNKNOWN_CITY`                           | `constants.py` |
+| `"NOT_EXISTING_CITY"` | test_weather (404)                                           | Same `UNKNOWN_CITY`                      | `constants.py` |
 
 Using one `UNKNOWN_CITY` in both test files avoids magic strings and keeps naming consistent.
 
@@ -132,11 +121,11 @@ Using one `UNKNOWN_CITY` in both test files avoids magic strings and keeps namin
 - **Schema validation pattern:** In tests you often do:
   - `data = assert_status_code_and_valid_json(response)`
   - `validate(instance=data, schema=schema)`
-  You could add a small helper, e.g. `assert_response_matches_schema(response, schema, expected_status=200)` that does both and returns `data`. This would shorten schema tests and keep the pattern in one place. Optional.
+    You could add a small helper, e.g. `assert_response_matches_schema(response, schema, expected_status=200)` that does both and returns `data`. This would shorten schema tests and keep the pattern in one place. Optional.
 - **Coordinates assertion:** In `test_weather_can_be_requested_by_lat_and_lon` you have:
   - `assert abs(data["coord"]["lat"] - lat) < COORDINATES_TOLERANCE`
   - `assert abs(data["coord"]["lon"] - lon) < COORDINATES_TOLERANCE`
-  A helper `assert_coordinates_match(data["coord"], lat, lon, COORDINATES_TOLERANCE)` would make the test more readable and reuse the tolerance logic. Optional.
+    A helper `assert_coordinates_match(data["coord"], lat, lon, COORDINATES_TOLERANCE)` would make the test more readable and reuse the tolerance logic. Optional.
 
 ---
 
@@ -258,16 +247,16 @@ Using one `UNKNOWN_CITY` in both test files avoids magic strings and keeps namin
 
 ## 7. Summary table
 
-| Area | Status | Priority actions |
-|------|--------|-------------------|
-| Structure | Good | Remove dead import in conftest; fix pytest.ini typos. |
-| Functions | All make sense | Fix get_temperature indentation and add fallback error; fix assertion typos and message formatting. |
-| Type hints | Partial | Add in helpers, services, utils, conftest (see section 3). |
-| Constants | Good | Add UNKNOWN_CITY, WEATHER_FORECAST_TEMPERATURE_TOLERANCE, DEFAULT_CITY_ID; use them in tests. |
-| Fixtures | Good | Optional: api_key skip/exit when unset; optional valid_weather_response. |
-| Helpers | Good | Optional: assert_response_matches_schema, assert_coordinates_match. |
-| Tests | Strong | Use new constants; fix test_weather double parse; add one perf test or remove test_perf.py; optional integration marker. |
-| Robustness | Good | Add timeout in api_client; optional docstrings/README/requirements if not present. |
+| Area       | Status         | Priority actions                                                                                                         |
+| ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Structure  | Good           | Remove dead import in conftest; fix pytest.ini typos.                                                                    |
+| Functions  | All make sense | Fix get_temperature indentation and add fallback error; fix assertion typos and message formatting.                      |
+| Type hints | Partial        | Add in helpers, services, utils, conftest (see section 3).                                                               |
+| Constants  | Good           | Add UNKNOWN_CITY, WEATHER_FORECAST_TEMPERATURE_TOLERANCE, DEFAULT_CITY_ID; use them in tests.                            |
+| Fixtures   | Good           | Optional: api_key skip/exit when unset; optional valid_weather_response.                                                 |
+| Helpers    | Good           | Optional: assert_response_matches_schema, assert_coordinates_match.                                                      |
+| Tests      | Strong         | Use new constants; fix test_weather double parse; add one perf test or remove test_perf.py; optional integration marker. |
+| Robustness | Good           | Add timeout in api_client; optional docstrings/README/requirements if not present.                                       |
 
 ---
 

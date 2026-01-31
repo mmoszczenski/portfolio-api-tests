@@ -1,5 +1,6 @@
+import requests
 
-def assert_status_code_and_valid_json(response, expected_status: int = 200, expected_type: type = dict):
+def assert_status_code_and_valid_json(response: requests.Response, expected_status: int = 200, expected_type: type = dict) -> dict:
 
     assert response.status_code == expected_status, (
         f"Expected status {expected_status}, got {response.status_code}\n"
@@ -21,7 +22,7 @@ def assert_status_code_and_valid_json(response, expected_status: int = 200, expe
     return data
 
 
-def assert_city_name(data, expected_name: str):
+def assert_city_name(data: dict, expected_name: str):
 
     city_name = data.get("name")
 
@@ -33,7 +34,7 @@ def assert_city_name(data, expected_name: str):
     )
 
 
-def assert_error_message(data):
+def assert_error_message(data: dict):
 
     assert "message" in data, (
         f"Response JSON does not contain 'message' field./n"
@@ -45,7 +46,7 @@ def assert_error_message(data):
         f"Value: {data['message']!r}, full response: {data}"
     )
 
-def assert_within_tolerance(actual, expected, tolerance):
+def assert_within_tolerance(actual: float, expected: float, tolerance: float):
     
     difference = abs(actual - expected)
     assert difference < tolerance, (

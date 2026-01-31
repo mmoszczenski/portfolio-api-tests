@@ -1,12 +1,20 @@
 import requests
+from services.api_client import ApiClient
 
 
 class WeatherService:
 
-    def __init__(self, client):
+    def __init__(self, client: ApiClient):
         self.client = client
 
-    def get_weather(self, city=None, api_key=None, units=None, lang=None, city_id=None) -> requests.Response:
+    def get_weather(
+        self, 
+        city: str | None = None,
+        api_key: str | None = None, 
+        units: str | None = None, 
+        lang: str | None = None, 
+        city_id: int | None = None
+        )-> requests.Response:
 
         params = {}
 
@@ -23,7 +31,8 @@ class WeatherService:
 
         return self.client.get("/weather", params=params)
 
-    def get_weather_by_coordinates(self, lat, lon, api_key) -> requests.Response:
+    def get_weather_by_coordinates(self, lat: float, lon: float, api_key: str) -> requests.Response:
+        
         params = {
             "lat": lat,
             "lon": lon,
