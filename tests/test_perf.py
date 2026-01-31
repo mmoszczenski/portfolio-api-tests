@@ -2,7 +2,9 @@ from constants import DEFAULT_CITY
 import pytest
 
 @pytest.mark.performance
+@pytest.mark.positive
 def test_weather_endpoint_response_time(weather, api_key):
+    
     city = DEFAULT_CITY
     max_seconds = 5.0
     
