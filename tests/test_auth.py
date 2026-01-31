@@ -11,6 +11,7 @@ def test_auth_valid_key(weather, api_key):
     data = assert_status_code_and_valid_json(response)
         
     assert_city_name(data, city)
+    
 @pytest.mark.negative
 def test_auth_invalid_key(weather):
      
@@ -21,6 +22,7 @@ def test_auth_invalid_key(weather):
     data = assert_status_code_and_valid_json(response, expected_status=401)
 
     assert_error_message(data, error_substring)
+    
 @pytest.mark.negative    
 def test_auth_no_key_provided(weather):
     
@@ -31,6 +33,7 @@ def test_auth_no_key_provided(weather):
     data = assert_status_code_and_valid_json(response, expected_status=401)
     
     assert_error_message(data, error_substring)
+    
 @pytest.mark.negative
 def test_auth_key_with_white_spaces(weather, api_key):
     

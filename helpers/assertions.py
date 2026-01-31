@@ -51,10 +51,10 @@ def assert_error_message(data: dict, *expected_substrings: str):
     
     message = data["message"]
     assert isinstance(message, str), f"message is not a string: {message}"
-    message.lower()
+  
     
     for substring in expected_substrings:
-        assert substring in message, f"Expected substring: '{substring}', not found in message: '{message}'"
+        assert substring in message.lower(), f"Expected substring: '{substring}', not found in message: '{message}'"
 
 def assert_within_tolerance(actual: float, expected: float, tolerance: float):
     

@@ -11,8 +11,18 @@ load_dotenv()
 
 
 @pytest.fixture
-def api_key() -> str | None:
-    return os.getenv("API_KEY")
+def api_key(weather) -> str | None:
+    
+    key = os.getenv("API_KEY")
+    
+    if not key:
+        pytest.skip("API KEY is not set")
+    response = weather.get_weather("Warsaw", key)
+    
+    if response.status_code == 401:
+        pytest.skip("API KEY is invalid")
+        
+    return key 
 
 
 @pytest.fixture
