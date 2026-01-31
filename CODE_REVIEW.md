@@ -77,24 +77,7 @@ No function is redundant; each has a clear responsibility.
 
 **Best practice for this repo:** Type hints improve readability, enable static checking (mypy, Pyright), and document contracts. For a portfolio and maintainability, adding them is recommended, especially on public helpers and services.
 
-### 3.1 Currently missing (recommended to add)
 
-| File | Location | Suggested annotation |
-| ---- | -------- | -------------------- |
-
-| **utils/schema_loader.py** | `load_schema(name)` | `name: str`, return e.g. `-> dict` (JSON Schema is an object). |
-| **utils/cities_loader.py** | `load_cities()` | `-> list` (list of city strings). |
-
-### 3.2 Style
-
-- **temp_converter.py:** Use space after colon in type hints: `kelvin: float` instead of `kelvin:float` (PEP 8).
-- **constants.py:** Remove the leading blank line (line 1) for consistency.
-
-### 3.3 Summary
-
-Adding the above hints is good practice: they document the API, help IDEs, and allow mypy/pyright. Start with `helpers/` and `services/`; then `utils/` and `conftest.py`.
-
----
 
 ## 4. Helpers, constants, and fixtures for readability
 
@@ -243,31 +226,11 @@ Using one `UNKNOWN_CITY` in both test files avoids magic strings and keeps namin
 
 ---
 
-## 7. Summary table
-
-| Area       | Status         | Priority actions                                                                                                         |
-| ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Structure  | Good           | Remove dead import in conftest; fix pytest.ini typos.                                                                    |
-| Functions  | All make sense | Fix get_temperature indentation and add fallback error; fix assertion typos and message formatting.                      |
-| Type hints | Partial        | Add in helpers, services, utils, conftest (see section 3).                                                               |
-| Constants  | Good           | Add UNKNOWN_CITY, WEATHER_FORECAST_TEMPERATURE_TOLERANCE, DEFAULT_CITY_ID; use them in tests.                            |
-| Fixtures   | Good           | Optional: api_key skip/exit when unset; optional valid_weather_response.                                                 |
-| Helpers    | Good           | Optional: assert_response_matches_schema, assert_coordinates_match.                                                      |
-| Tests      | Strong         | Use new constants; fix test_weather double parse; add one perf test or remove test_perf.py; optional integration marker. |
-| Robustness | Good           | Add timeout in api_client; optional docstrings/README/requirements if not present.                                       |
-
----
 
 ## 8. Checklist (no code changes from reviewer)
 
-- [ ] Remove unused `_assert_status_code_and_valid_json` import/alias from conftest.
-- [ ] Fix "Expeced" and message formatting in assertions.py; add newline in assert_within_tolerance message.
-- [ ] Fix indentation and add fallback TypeError in get_temperature_for_city.
-- [ ] Add timeout to ApiClient.get.
 - [ ] Add constants: UNKNOWN_CITY, WEATHER_FORECAST_TEMPERATURE_TOLERANCE, DEFAULT_CITY_ID (or WARSAW_CITY_ID).
 - [ ] Use those constants in test_weather.py, test_forecast.py, test_integration_weather_vs_forecast.py.
-- [ ] Add type hints (helpers, services, utils, conftest) as in section 3.
-- [ ] Fix pytest.ini marker text ("test cases"); temp_converter spacing; constants/schema_loader/cities_loader return types.
 - [ ] Either implement one test in test_perf.py (with marker) or remove the file.
 - [ ] Optional: assert_response_matches_schema helper; assert_coordinates_match; @pytest.mark.integration; reuse data from assert_status_code_and_valid_json in test_weather_returns_polish_when_language_PL.
 

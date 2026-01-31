@@ -1,5 +1,5 @@
 from jsonschema import validate
-from constants import TEMPERATURE_CONVERSION_TOLERANCE, DEFAULT_CITY
+from constants import TEMPERATURE_CONVERSION_TOLERANCE, DEFAULT_CITY, UNKOWN_CITY
 from helpers.assertions import assert_error_message, assert_status_code_and_valid_json
 
 
@@ -53,7 +53,7 @@ def test_forecast_response_matches_schema(forecast, api_key, forecast_schema):
 
 def test_forecast_returns_404_when_city_unknown(forecast, api_key):
 
-    city = "NON_EXISTING_CITY"
+    city = UNKOWN_CITY
 
     response = forecast.get_forecast(city, api_key)
 

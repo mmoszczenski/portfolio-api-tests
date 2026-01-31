@@ -82,3 +82,5 @@ Desktop.ini
 *.env
 .env.*
 config.local.*
+
+CODE_REVIEW.md

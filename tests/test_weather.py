@@ -5,7 +5,7 @@ from helpers.assertions import assert_error_message
 from helpers.assertions import assert_within_tolerance
 from helpers.assertions import assert_status_code_and_valid_json
 from constants import TEMPERATURE_CONVERSION_TOLERANCE, COORDINATES_TOLERANCE
-from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES
+from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES, DEFAULT_CITY_ID, UNKOWN_CITY
 from helpers.get_temperature import get_temperature_in_celsius, get_temperature_in_fahrenheit, get_temperature_for_city
 from utils.temp_converter import kelvin_to_celsius, kelvin_to_fahrenheit
 
@@ -117,7 +117,7 @@ def test_weather_response_matches_schema(weather, api_key, weather_schema):
 
 def test_weather_returns_404_for_non_existing_city(weather, api_key):
 
-    city = "NOT_EXISTING_CITY"
+    city = UNKOWN_CITY
 
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=404)
@@ -187,7 +187,7 @@ def test_weather_returns_400_when_coordinates_null(weather, api_key):
 
 def test_weather_can_be_requested_by_city_id(weather, api_key):
 
-    city_id = 756135 # City ID of Warsaw
+    city_id = DEFAULT_CITY_ID
 
     response = weather.get_weather(city_id=city_id, api_key=api_key)
     data = assert_status_code_and_valid_json(response)
