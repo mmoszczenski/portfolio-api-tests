@@ -7,7 +7,6 @@ from constants import TEMPERATURE_CONVERTION_TOLERANCE, COORDINATES_TOLERANCE
 from constants import DEFAULT_CITY, DEFAULT_COORDINATES, INVALID_COORDINATES
 from helpers.get_temperature import get_temperature_in_celsius, get_temperature_in_fahrenheit, get_temperature_for_city
 from utils.temp_converter import kelvin_to_celsius, kelvin_to_fahrenheit
-from services.weather_service import WeatherService
 
 def test_weather_returns_valid_data_for_single_city(weather, api_key, assert_status_code_and_valid_json):
 
