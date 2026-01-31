@@ -1,6 +1,6 @@
 from jsonschema import validate
 from helpers.assertions import assert_city_name
-from helpers.assertions import assert_errorr_message_present
+from helpers.assertions import assert_error_message_present
 from helpers.assertions import assert_within_tolerance
 from helpers.assertions import assert_status_code_and_valid_json
 from helpers.assertions import assert_coordinates_match
@@ -132,7 +132,7 @@ def test_weather_returns_404_for_non_existing_city(weather, api_key):
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=404)
 
-    assert_errorr_message_present(data)
+    assert_error_message_present(data)
     assert_error_message(data, error_substring)
 
 @pytest.mark.weather
@@ -144,7 +144,7 @@ def test_weather_returns_400_when_city_param_missing(weather, api_key):
     response = weather.get_weather(api_key=api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
-    assert_errorr_message_present(data)
+    assert_error_message_present(data)
     assert_error_message(data, error_substring)
 
 @pytest.mark.weather
@@ -157,7 +157,7 @@ def test_weather_returns_400_when_city_param_empty_string(weather, api_key):
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
-    assert_errorr_message_present(data)
+    assert_error_message_present(data)
     assert_error_message(data, error_substring)
 
 @pytest.mark.weather
@@ -170,7 +170,7 @@ def test_weather_returns_404_when_city_param_with_special_characters(weather, ap
     response = weather.get_weather(city, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=404)
 
-    assert_errorr_message_present(data)
+    assert_error_message_present(data)
     assert_error_message(data, error_substring)
 
 @pytest.mark.weather
@@ -195,7 +195,7 @@ def test_weather_returns_400_when_coordinates_invalid(weather, api_key):
     response = weather.get_weather_by_coordinates(lat, lon, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
-    assert_errorr_message_present(data)
+    assert_error_message_present(data)
     assert_error_message(data, error_substring)
 
 @pytest.mark.weather
@@ -209,7 +209,7 @@ def test_weather_returns_400_when_coordinates_null(weather, api_key):
     response = weather.get_weather_by_coordinates(lat, lon, api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
-    assert_errorr_message_present(data)
+    assert_error_message_present(data)
     assert_error_message(data, error_substring)
 
 @pytest.mark.weather

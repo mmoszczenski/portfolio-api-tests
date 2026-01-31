@@ -33,7 +33,7 @@ def assert_city_name(data: dict, expected_name: str):
         f"Expected '{expected_name}', got '{city_name}'"
     )
 
-def assert_errorr_message_present(data: dict):
+def assert_error_message_present(data: dict):
 
     assert "message" in data, (
         f"Response JSON does not contain 'message' field.\n"
@@ -49,8 +49,9 @@ def assert_error_message(data: dict, *expected_substrings: str):
     
     assert "message" in data, (f"Response JSON does not contain 'message' field, got {data}")
     
-    message = data["message"].lower()
+    message = data["message"]
     assert isinstance(message, str), f"message is not a string: {message}"
+    message.lower()
     
     for substring in expected_substrings:
         assert substring in message, f"Expected substring: '{substring}', not found in message: '{message}'"

@@ -1,6 +1,6 @@
 from jsonschema import validate
 from constants import TEMPERATURE_CONVERSION_TOLERANCE, DEFAULT_CITY, UNKNOWN_CITY
-from helpers.assertions import assert_errorr_message_present, assert_status_code_and_valid_json, assert_within_tolerance, assert_error_message
+from helpers.assertions import assert_error_message_present, assert_status_code_and_valid_json, assert_within_tolerance, assert_error_message
 from helpers.get_temperature import get_temperature_for_city, get_temperature_in_celsius
 from utils.temp_converter import kelvin_to_celsius
 import pytest
@@ -14,7 +14,7 @@ def test_forecast_returns_400_when_city_param_missing(forecast, api_key):
     response = forecast.get_forecast(api_key=api_key)
     data = assert_status_code_and_valid_json(response, expected_status=400)
 
-    assert_errorr_message_present(data)
+    assert_error_message_present(data)
     assert_error_message(data, error_substring)
 
 @pytest.mark.forecast
@@ -70,7 +70,7 @@ def test_forecast_returns_404_when_city_unknown(forecast, api_key):
 
     data = assert_status_code_and_valid_json(response, expected_status=404)
 
-    assert_errorr_message_present(data)
+    assert_error_message_present(data)
     assert_error_message(data, error_substring)
 
 @pytest.mark.forecast
