@@ -12,12 +12,11 @@ load_dotenv()
 
 @pytest.fixture
 def api_key() -> str | None:
-    
     key = os.getenv("API_KEY")
-    
+
     if not key:
         pytest.skip("API KEY is not set")
-    return key 
+    return key
 
 
 @pytest.fixture
@@ -48,4 +47,3 @@ def weather_schema() -> dict:
 @pytest.fixture
 def forecast_schema() -> dict:
     return load_schema("forecast_schema.json")
-

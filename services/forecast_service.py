@@ -3,19 +3,17 @@ from services.api_client import ApiClient
 
 
 class ForecastService:
-
     def __init__(self, client: ApiClient):
         self.client = client
 
     def get_forecast(
-        self, 
+        self,
         city: str | None = None,
         api_key: str | None = None,
         lat: float | None = None,
         lon: float | None = None,
-        units: str | None = None
-        ) -> requests.Response:
-
+        units: str | None = None,
+    ) -> requests.Response:
         params = {}
 
         if city is not None:

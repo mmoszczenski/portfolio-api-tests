@@ -3,21 +3,19 @@ from services.api_client import ApiClient
 
 
 class WeatherService:
-
     def __init__(self, client: ApiClient):
         self.client = client
 
     def get_weather(
-        self, 
+        self,
         city: str | None = None,
-        api_key: str | None = None, 
+        api_key: str | None = None,
         lat: float | None = None,
         lon: float | None = None,
-        units: str | None = None, 
-        lang: str | None = None, 
-        city_id: int | None = None
-        )-> requests.Response:
-
+        units: str | None = None,
+        lang: str | None = None,
+        city_id: int | None = None,
+    ) -> requests.Response:
         params = {}
 
         if city is not None:
