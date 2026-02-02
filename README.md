@@ -17,12 +17,11 @@ Automated API tests for [OpenWeatherMap](https://openweathermap.org/api) (weathe
 ## Setup
 
 1. Clone the repo and create a virtual environment:
+
    ```bash
    python -m venv venv
    source venv/bin/activate   # Windows: venv\Scripts\activate
    ```
-
-````
 
 2. Install dependencies:
 
@@ -64,5 +63,6 @@ pytest -m "not integration"
 - `schemas/` — JSON schemas for response validation.
 - `constants.py` — shared constants (tolerances, default city, etc.).
 
+```
 
-````
+```
