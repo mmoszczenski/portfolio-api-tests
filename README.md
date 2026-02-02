@@ -45,11 +45,21 @@ pytest
 # Only positive tests
 pytest -m positive
 
+# Only negative tests
+pytest -m negative
+
 # Only weather tests
 pytest -m weather
 
-# Exclude integration tests
-pytest -m "not integration"
+# Only forecast tests
+pytest -m forecast
+
+# Integration test
+pytest -m integration
+
+# Performance test
+pytest -m performance
+
 ```
 
 ## Project layout
@@ -62,7 +72,3 @@ pytest -m "not integration"
 - `data/` — test data (e.g. `cities.json`).
 - `schemas/` — JSON schemas for response validation.
 - `constants.py` — shared constants (tolerances, default city, etc.).
-
-```
-
-```
